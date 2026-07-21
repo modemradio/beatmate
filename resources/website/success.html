@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BeatMate V11 - Paiement Confirme</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', sans-serif; background: #0a0a14; color: #f1f5f9; line-height: 1.7; }
+
+        /* === NAVBAR === */
+        .navbar { background: #0d0d1a; border-bottom: 1px solid #1E293B; padding: 0 40px; display: flex; align-items: center; justify-content: space-between; height: 64px; position: sticky; top: 0; z-index: 100; }
+        .navbar-brand { font-size: 1.4em; font-weight: bold; color: #f1f5f9; text-decoration: none; display: flex; align-items: center; gap: 10px; }
+        .navbar-brand span { background: linear-gradient(135deg, #3B82F6, #8B5CF6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .navbar-links { display: flex; gap: 32px; list-style: none; }
+        .navbar-links a { color: #94A3B8; text-decoration: none; font-size: 0.95em; font-weight: 500; transition: color 0.2s; }
+        .navbar-links a:hover { color: #3B82F6; }
+
+        /* === LAYOUT === */
+        .container { max-width: 700px; margin: 0 auto; padding: 40px 20px; }
+
+        /* === SUCCESS SECTION === */
+        .success-card { background: #1a1a2e; border-radius: 20px; padding: 50px 40px; border: 1px solid #2a2a44; text-align: center; margin-top: 40px; }
+
+        /* === CHECKMARK ANIMATION === */
+        .checkmark-circle { width: 100px; height: 100px; border-radius: 50%; background: linear-gradient(135deg, #10B981, #059669); margin: 0 auto 30px; display: flex; align-items: center; justify-content: center; animation: scaleIn 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94); box-shadow: 0 0 40px rgba(16, 185, 129, 0.3); }
+        .checkmark-circle svg { width: 50px; height: 50px; }
+        .checkmark-circle svg path { stroke: white; stroke-width: 3; fill: none; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 60; stroke-dashoffset: 60; animation: drawCheck 0.6s 0.3s ease forwards; }
+
+        @keyframes scaleIn {
+            0% { transform: scale(0); opacity: 0; }
+            60% { transform: scale(1.1); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        @keyframes drawCheck {
+            to { stroke-dashoffset: 0; }
+        }
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .success-title { font-size: 2em; color: #10B981; margin-bottom: 8px; animation: fadeUp 0.5s 0.5s ease both; }
+        .success-subtitle { color: #64748B; font-size: 1.1em; margin-bottom: 30px; animation: fadeUp 0.5s 0.6s ease both; }
+
+        /* === LICENCE KEY === */
+        .licence-section { animation: fadeUp 0.5s 0.7s ease both; margin-bottom: 30px; }
+        .licence-section h3 { color: #f1f5f9; font-size: 1.1em; margin-bottom: 12px; }
+        .licence-key-box { position: relative; display: inline-block; }
+        .licence-key { font-family: 'Courier New', monospace; font-size: 1.5em; color: #4ade80; background: #0a0a14; padding: 16px 24px; border-radius: 10px; display: inline-block; letter-spacing: 3px; border: 2px solid #166534; cursor: pointer; transition: all 0.2s; user-select: all; }
+        .licence-key:hover { border-color: #4ade80; background: #0f1f0f; }
+        .copy-hint { color: #64748B; font-size: 0.85em; margin-top: 8px; }
+        .copy-feedback { color: #4ade80; font-size: 0.9em; margin-top: 6px; min-height: 1.4em; font-weight: bold; }
+
+        /* === INSTRUCTIONS === */
+        .instructions { animation: fadeUp 0.5s 0.8s ease both; background: #0d0d1a; border-radius: 14px; padding: 28px; margin: 30px 0; text-align: left; border: 1px solid #1E293B; }
+        .instructions h3 { color: #f1f5f9; font-size: 1.1em; margin-bottom: 16px; text-align: center; }
+        .step { display: flex; align-items: flex-start; gap: 14px; margin-bottom: 16px; }
+        .step:last-child { margin-bottom: 0; }
+        .step-number { background: linear-gradient(135deg, #3B82F6, #8B5CF6); color: white; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.9em; flex-shrink: 0; }
+        .step-text { color: #94A3B8; padding-top: 4px; }
+        .step-text strong { color: #f1f5f9; }
+        .step-text code { font-family: 'Courier New', monospace; background: #1a1a2e; padding: 2px 8px; border-radius: 4px; color: #4ade80; font-size: 0.95em; }
+
+        /* === EMAIL NOTICE === */
+        .email-notice { animation: fadeUp 0.5s 0.9s ease both; background: #1e1b33; border: 1px solid #3B82F6; border-radius: 10px; padding: 16px 20px; margin-bottom: 30px; display: flex; align-items: center; gap: 12px; }
+        .email-notice .icon { font-size: 1.5em; }
+        .email-notice p { color: #94A3B8; font-size: 0.95em; margin: 0; }
+
+        /* === BUTTON === */
+        .btn { display: inline-block; text-align: center; padding: 16px 40px; border-radius: 10px; text-decoration: none; font-weight: bold; font-size: 1.05em; transition: all 0.2s; cursor: pointer; border: none; animation: fadeUp 0.5s 1s ease both; }
+        .btn:hover { opacity: 0.85; transform: scale(1.02); }
+        .btn-home { background: linear-gradient(135deg, #3B82F6, #8B5CF6); color: white; }
+
+        /* === FOOTER === */
+        footer { text-align: center; color: #475569; padding: 40px 20px; border-top: 1px solid #1E293B; margin-top: 60px; font-size: 0.9em; }
+        footer a { color: #3B82F6; text-decoration: none; }
+        footer a:hover { text-decoration: underline; }
+
+        /* === RESPONSIVE === */
+        @media (max-width: 768px) {
+            .navbar { padding: 0 16px; flex-direction: column; height: auto; padding: 12px 16px; gap: 10px; }
+            .navbar-links { gap: 16px; flex-wrap: wrap; justify-content: center; }
+            .success-card { padding: 30px 20px; }
+            .licence-key { font-size: 1.1em; letter-spacing: 1px; padding: 12px 16px; }
+            .success-title { font-size: 1.5em; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- NAVBAR -->
+    <nav class="navbar">
+        <a href="index.html" class="navbar-brand"><span>BeatMate V11</span></a>
+        <ul class="navbar-links">
+            <li><a href="index.html">Accueil</a></li>
+            <li><a href="features.html">Fonctionnalites</a></li>
+            <li><a href="pricing.html">Tarifs</a></li>
+            <li><a href="download.html">Telecharger</a></li>
+        </ul>
+    </nav>
+
+    <div class="container">
+
+        <div class="success-card">
+
+            <!-- ANIMATED CHECKMARK -->
+            <div class="checkmark-circle">
+                <svg viewBox="0 0 50 50">
+                    <path d="M14 27 L22 35 L38 16" />
+                </svg>
+            </div>
+
+            <h1 class="success-title">Paiement confirme !</h1>
+            <p class="success-subtitle">Merci pour votre achat. Votre licence BeatMate V11 est prete.</p>
+
+            <!-- LICENCE KEY -->
+            <div class="licence-section">
+                <h3>Votre cle de licence</h3>
+                <div class="licence-key-box">
+                    <div class="licence-key" id="licence-key" onclick="copyKey()">-----</div>
+                </div>
+                <div class="copy-hint">Cliquez sur la cle pour la copier</div>
+                <div class="copy-feedback" id="copy-feedback"></div>
+            </div>
+
+            <!-- INSTRUCTIONS -->
+            <div class="instructions">
+                <h3>Instructions d'activation</h3>
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-text">Ouvrez <strong>BeatMate V11</strong></div>
+                </div>
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-text">Allez dans <strong>Parametres</strong> &gt; <strong>Licence</strong></div>
+                </div>
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-text">Collez votre cle : <code id="key-display">XXXXX-XXXXX-XXXXX-XXXXX</code></div>
+                </div>
+                <div class="step">
+                    <div class="step-number">4</div>
+                    <div class="step-text">Cliquez <strong>"Activer"</strong></div>
+                </div>
+            </div>
+
+            <!-- EMAIL NOTICE -->
+            <div class="email-notice">
+                <span class="icon">&#9993;</span>
+                <p>Un email de confirmation sera envoye a votre adresse avec votre cle de licence et les instructions d'activation.</p>
+            </div>
+
+            <!-- BACK BUTTON -->
+            <a href="index.html" class="btn btn-home">Retour a l'accueil</a>
+
+        </div>
+
+    </div>
+
+    <!-- FOOTER -->
+    <footer>
+        <p>&copy; 2026 BeatMate V11 Professional. Tous droits reserves.</p>
+        <p style="margin-top: 8px;">
+            <a href="index.html">Accueil</a> &middot;
+            <a href="features.html">Fonctionnalites</a> &middot;
+            <a href="pricing.html">Tarifs</a> &middot;
+            <a href="download.html">Telecharger</a>
+        </p>
+    </footer>
+
+    <script>
+        // === GET KEY FROM URL ===
+        function init() {
+            const params = new URLSearchParams(window.location.search);
+            const key = params.get('key');
+
+            if (key) {
+                document.getElementById('licence-key').textContent = key;
+                document.getElementById('key-display').textContent = key;
+            } else {
+                document.getElementById('licence-key').textContent = 'DEMO-XXXXX-XXXXX-XXXXX';
+                document.getElementById('key-display').textContent = 'DEMO-XXXXX-XXXXX-XXXXX';
+            }
+        }
+
+        // === COPY KEY ===
+        function copyKey() {
+            const key = document.getElementById('licence-key').textContent;
+            navigator.clipboard.writeText(key).then(() => {
+                showCopyFeedback();
+            }).catch(() => {
+                // Fallback for older browsers
+                const range = document.createRange();
+                range.selectNode(document.getElementById('licence-key'));
+                window.getSelection().removeAllRanges();
+                window.getSelection().addRange(range);
+                document.execCommand('copy');
+                window.getSelection().removeAllRanges();
+                showCopyFeedback();
+            });
+        }
+
+        function showCopyFeedback() {
+            const el = document.getElementById('copy-feedback');
+            el.textContent = '\u2713 Cle copiee dans le presse-papiers !';
+            setTimeout(() => { el.textContent = ''; }, 4000);
+        }
+
+        init();
+    </script>
+
+</body>
+</html>

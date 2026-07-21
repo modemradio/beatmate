@@ -1,0 +1,67 @@
+name: Build macOS
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: macos-14
+    timeout-minutes: 120
+    env:
+      ONNX_VER: "1.16.3"
+      CCACHE_DIR: ${{ github.workspace }}/.ccache
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Outils
+        run: brew install cmake ffmpeg ccache
+
+      - name: Cache ccache
+        uses: actions/cache@v4
+        with:
+          path: .ccache
+          key: ccache-macos-${{ github.sha }}
+          restore-keys: |
+            ccache-macos-
+
+      - name: ONNX Runtime (si absent)
+        run: |
+          set -e
+          LIBDIR="third_party/onnxruntime/lib"
+          if ! ls "$LIBDIR"/libonnxruntime*.dylib >/dev/null 2>&1; then
+            echo "Telechargement ONNX Runtime $ONNX_VER (universal2)..."
+            curl -L -o ort.tgz "https://github.com/microsoft/onnxruntime/releases/download/v${ONNX_VER}/onnxruntime-osx-universal2-${ONNX_VER}.tgz"
+            tar xzf ort.tgz
+            mkdir -p third_party/onnxruntime
+            cp -R "onnxruntime-osx-universal2-${ONNX_VER}/include" third_party/onnxruntime/
+            cp -R "onnxruntime-osx-universal2-${ONNX_VER}/lib" third_party/onnxruntime/
+          fi
+          ls -la "$LIBDIR"
+
+      - name: Build
+        env:
+          EXTRA_CMAKE_ARGS: "-DCMAKE_C_COMPILER_LAUNCHER=ccache -DCMAKE_CXX_COMPILER_LAUNCHER=ccache"
+        run: |
+          chmod +x build_mac.sh
+          ./build_mac.sh
+
+      - name: DMG
+        if: success()
+        run: |
+          if [ -f package_dmg.sh ]; then
+            chmod +x package_dmg.sh
+            ./package_dmg.sh "build-mac/BeatMateV11_artefacts/Release/BeatMate V11.app" || true
+          fi
+
+      - name: Recuperer l'app et le dmg
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: BeatMate-macOS
+          path: |
+            build-mac/BeatMateV11_artefacts/Release/*.app
+            *.dmg
+            build-mac/**/*.dmg
+          if-no-files-found: warn
+          retention-days: 14

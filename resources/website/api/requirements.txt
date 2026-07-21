@@ -1,0 +1,8 @@
+flask==3.0.0
+flask-cors==4.0.0
+flask-limiter==3.5.0
+python-dotenv==1.0.0
+stripe==7.0.0
+paypalrestsdk==1.13.3
+bleach==6.1.0
+gunicorn==21.1.0

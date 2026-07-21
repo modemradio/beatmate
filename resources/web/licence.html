@@ -1,0 +1,316 @@
+﻿<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BeatMate V11 Professional - Licences, Forfaits et Fonctionnalites</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', sans-serif; background: #0a0a14; color: #f1f5f9; line-height: 1.7; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 40px 20px; }
+        h1 { font-size: 2.8em; text-align: center; margin-bottom: 10px; background: linear-gradient(135deg, #3B82F6, #8B5CF6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .subtitle { text-align: center; color: #64748B; font-size: 1.2em; margin-bottom: 50px; }
+        h2 { font-size: 1.8em; margin: 50px 0 20px; color: #3B82F6; border-bottom: 2px solid #1E293B; padding-bottom: 10px; }
+        h3 { font-size: 1.3em; margin: 30px 0 12px; color: #8B5CF6; }
+        p, li { color: #94A3B8; margin-bottom: 10px; }
+        ul { padding-left: 24px; }
+        .plans { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 24px; margin-bottom: 60px; }
+        .plan { background: #1a1a2e; border-radius: 16px; padding: 32px 24px; border: 1px solid #2a2a44; transition: transform 0.3s, border-color 0.3s; }
+        .plan:hover { transform: translateY(-4px); border-color: #3B82F6; }
+        .plan.premium { border: 2px solid #F59E0B; background: linear-gradient(135deg, #1a1a2e, #2a2020); }
+        .plan-name { font-size: 1.5em; font-weight: bold; margin-bottom: 4px; color: #f1f5f9; }
+        .plan-price { font-size: 2.2em; font-weight: bold; color: #3B82F6; margin: 16px 0 4px; }
+        .plan-price span { font-size: 0.4em; color: #64748B; font-weight: normal; }
+        .plan.premium .plan-price { color: #F59E0B; }
+        .plan-annual { color: #10B981; font-size: 0.95em; margin-bottom: 20px; }
+        .features { list-style: none; padding: 0; margin-bottom: 24px; }
+        .features li { padding: 8px 0; border-bottom: 1px solid #1E293B; display: flex; align-items: center; gap: 10px; font-size: 0.95em; }
+        .features li:last-child { border: none; }
+        .check { color: #10B981; font-size: 1.2em; }
+        .cross { color: #EF4444; font-size: 1.2em; }
+        .lock { color: #F59E0B; font-size: 1.2em; }
+        .badge { display: inline-block; padding: 3px 10px; border-radius: 6px; font-size: 0.75em; font-weight: bold; letter-spacing: 1px; }
+        .badge-trial { background: #475569; color: #f1f5f9; }
+        .badge-personal { background: #3B82F6; color: white; }
+        .badge-pro { background: #8B5CF6; color: white; }
+        .badge-premium { background: linear-gradient(135deg, #F59E0B, #EF4444); color: white; }
+        .btn { display: block; text-align: center; padding: 14px; border-radius: 10px; text-decoration: none; font-weight: bold; font-size: 1.05em; transition: all 0.2s; }
+        .btn:hover { opacity: 0.85; transform: scale(1.02); }
+        .btn-trial { background: #475569; color: white; }
+        .btn-personal { background: #3B82F6; color: white; }
+        .btn-pro { background: #8B5CF6; color: white; }
+        .btn-premium { background: linear-gradient(135deg, #F59E0B, #EF4444); color: white; font-size: 1.1em; }
+        table { width: 100%; border-collapse: collapse; margin: 20px 0 40px; }
+        th, td { padding: 12px 16px; text-align: center; border-bottom: 1px solid #1E293B; }
+        th { background: #1a1a2e; color: #64748B; font-size: 0.8em; text-transform: uppercase; letter-spacing: 1px; }
+        td:first-child { text-align: left; color: #f1f5f9; }
+        .section { margin: 40px 0; }
+        .feature-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px; margin: 20px 0; }
+        .feature-card { background: #1a1a2e; border-radius: 12px; padding: 24px; border: 1px solid #2a2a44; }
+        .feature-card h4 { color: #f1f5f9; margin-bottom: 8px; font-size: 1.1em; }
+        .feature-card p { color: #94A3B8; font-size: 0.9em; margin: 0; }
+        .feature-icon { font-size: 1.5em; margin-bottom: 8px; }
+        .faq { margin-top: 40px; }
+        .faq-item { background: #1a1a2e; border-radius: 10px; padding: 20px 24px; margin-bottom: 12px; border: 1px solid #2a2a44; }
+        .faq-item h4 { color: #f1f5f9; margin-bottom: 8px; }
+        .faq-item p { color: #94A3B8; margin: 0; font-size: 0.95em; }
+        footer { text-align: center; color: #475569; padding: 40px 0; border-top: 1px solid #1E293B; margin-top: 60px; }
+        .highlight { color: #F59E0B; font-weight: bold; }
+        .tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 0.8em; font-weight: bold; background: #3B82F6; color: white; margin-left: 6px; }
+        .tag.premium-only { background: #F59E0B; color: #0a0a14; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>BeatMate V11 Professional</h1>
+        <p class="subtitle">Le logiciel de preparation DJ et creation audio le plus complet</p>
+
+        <!-- ============================================ -->
+        <!-- FORFAITS -->
+        <!-- ============================================ -->
+        <h2>Forfaits et Tarifs</h2>
+
+        <div class="plans">
+            <div class="plan">
+                <span class="badge badge-trial">ESSAI GRATUIT</span>
+                <div class="plan-name">Trial</div>
+                <div class="plan-price">0&euro; <span>/ 7 jours</span></div>
+                <div class="plan-annual">Decouvrez sans engagement</div>
+                <ul class="features">
+                    <li><span class="check">&#10003;</span> Bibliotheque illimitee</li>
+                    <li><span class="check">&#10003;</span> Import multi-format (MP3, WAV, FLAC, AIFF, OGG, M4A)</li>
+                    <li><span class="check">&#10003;</span> Analyse BPM, Key, Energy, Structure</li>
+                    <li><span class="check">&#10003;</span> 8 Hot Cues par piste + IA</li>
+                    <li><span class="check">&#10003;</span> Normalisation LUFS</li>
+                    <li><span class="check">&#10003;</span> Preparation Set + Soiree</li>
+                    <li><span class="check">&#10003;</span> Playlists intelligentes</li>
+                    <li><span class="check">&#10003;</span> Export Rekordbox, Serato, Traktor, VirtualDJ</li>
+                    <li><span class="lock">&#9888;</span> Lecture limitee a 5 min / morceau</li>
+                    <li><span class="cross">&#10007;</span> Stems IA (Demucs)</li>
+                    <li><span class="cross">&#10007;</span> BeatMate Live</li>
+                    <li><span class="cross">&#10007;</span> DJ et Studio</li>
+                </ul>
+                <a href="#" class="btn btn-trial">Telecharger gratuitement</a>
+            </div>
+
+            <div class="plan">
+                <span class="badge badge-personal">PERSONAL</span>
+                <div class="plan-name">Personal</div>
+                <div class="plan-price">9.99&euro; <span>/ mois</span></div>
+                <div class="plan-annual">ou <strong>99.99&euro; / an</strong> (2 mois offerts)</div>
+                <ul class="features">
+                    <li><span class="check">&#10003;</span> Tout le Trial sans limitation</li>
+                    <li><span class="check">&#10003;</span> Lecture illimitee</li>
+                    <li><span class="check">&#10003;</span> Separation de stems IA (Demucs)</li>
+                    <li><span class="check">&#10003;</span> Streaming (Spotify, Deezer, Tidal, etc.)</li>
+                    <li><span class="check">&#10003;</span> Suggestions IA intelligentes</li>
+                    <li><span class="check">&#10003;</span> Export Ableton Live (.als)</li>
+                    <li><span class="check">&#10003;</span> Classification genre + mood IA</li>
+                    <li><span class="cross">&#10007;</span> BeatMate Live</li>
+                    <li><span class="cross">&#10007;</span> DJ et Studio</li>
+                </ul>
+                <a href="#" class="btn btn-personal">Choisir Personal - 9.99&euro;/mois</a>
+            </div>
+
+            <div class="plan">
+                <span class="badge badge-pro">PROFESSIONAL</span>
+                <div class="plan-name">Professional</div>
+                <div class="plan-price">19.99&euro; <span>/ mois</span></div>
+                <div class="plan-annual">ou <strong>199.99&euro; / an</strong> (2 mois offerts)</div>
+                <ul class="features">
+                    <li><span class="check">&#10003;</span> Tout le Personal</li>
+                    <li><span class="check">&#10003;</span> Support prioritaire par email</li>
+                    <li><span class="check">&#10003;</span> Mises a jour anticipees (beta)</li>
+                    <li><span class="check">&#10003;</span> Presets professionnels (transitions, EQ)</li>
+                    <li><span class="check">&#10003;</span> Controleurs MIDI avances</li>
+                    <li><span class="check">&#10003;</span> Enregistrement de mix WAV 24bit</li>
+                    <li><span class="cross">&#10007;</span> BeatMate Live</li>
+                    <li><span class="cross">&#10007;</span> DJ et Studio</li>
+                </ul>
+                <a href="#" class="btn btn-pro">Choisir Professional - 19.99&euro;/mois</a>
+            </div>
+
+            <div class="plan premium">
+                <span class="badge badge-premium">PREMIUM - TOUT INCLUS</span>
+                <div class="plan-name">Premium</div>
+                <div class="plan-price">29.99&euro; <span>/ mois</span></div>
+                <div class="plan-annual">ou <strong>299.99&euro; / an</strong> (2 mois offerts)</div>
+                <ul class="features">
+                    <li><span class="check">&#10003;</span> <strong>TOUTES les fonctionnalites</strong></li>
+                    <li><span class="check">&#10003;</span> BeatMate Live (detection temps reel)</li>
+                    <li><span class="check">&#10003;</span> DJ et Studio (mix + montage + mashup)</li>
+                    <li><span class="check">&#10003;</span> Automix IA avec transitions intelligentes</li>
+                    <li><span class="check">&#10003;</span> Export video (YouTube, TikTok, Instagram)</li>
+                    <li><span class="check">&#10003;</span> Separation stems 4 bandes (Demucs)</li>
+                    <li><span class="check">&#10003;</span> RubberBand Pro (time-stretch studio)</li>
+                    <li><span class="check">&#10003;</span> Support prioritaire 24/7</li>
+                    <li><span class="check">&#10003;</span> Mises a jour anticipees</li>
+                </ul>
+                <a href="#" class="btn btn-premium">Choisir Premium - 29.99&euro;/mois</a>
+            </div>
+        </div>
+
+        <!-- ============================================ -->
+        <!-- TABLEAU COMPARATIF -->
+        <!-- ============================================ -->
+        <h2>Comparaison complete des forfaits</h2>
+        <table>
+            <thead>
+                <tr><th style="text-align:left">Fonctionnalite</th><th>Trial<br><small>0&euro;</small></th><th>Personal<br><small>9.99&euro;/m</small></th><th>Professional<br><small>19.99&euro;/m</small></th><th>Premium<br><small>29.99&euro;/m</small></th></tr>
+            </thead>
+            <tbody>
+                <tr><td><strong>General</strong></td><td></td><td></td><td></td><td></td></tr>
+                <tr><td>Duree de licence</td><td>7 jours</td><td>Mensuel/Annuel</td><td>Mensuel/Annuel</td><td>Mensuel/Annuel</td></tr>
+                <tr><td>Machines par licence</td><td>1</td><td>1</td><td>1</td><td>1</td></tr>
+                <tr><td>Mises a jour</td><td>Non</td><td>Oui</td><td>Anticipees</td><td>Anticipees</td></tr>
+                <tr><td>Support</td><td>FAQ</td><td>Email</td><td>Prioritaire</td><td>24/7</td></tr>
+
+                <tr><td><strong>Bibliotheque</strong></td><td></td><td></td><td></td><td></td></tr>
+                <tr><td>Import multi-format</td><td style="color:#10B981">&#10003;</td><td style="color:#10B981">&#10003;</td><td style="color:#10B981">&#10003;</td><td style="color:#10B981">&#10003;</td></tr>
+                <tr><td>Import DJ Software (Rekordbox, Serato, Traktor, VirtualDJ, Engine DJ)</td><td style="color:#10B981">&#10003;</td><td style="color:#10B981">&#10003;</td><td style="color:#10B981">&#10003;</td><td style="color:#10B981">&#10003;</td></tr>
+                <tr><td>Recherche full-text + filtres avances</td><td style="color:#10B981">&#10003;</td><td style="color:#10B981">&#10003;</td><td style="color:#10B981">&#10003;</td><td style="color:#10B981">&#10003;</td></tr>
+                <tr><td>Smart Playlists (regles automatiques)</td><td style="color:#10B981">&#10003;</td><td style="color:#10B981">&#10003;</td><td style="color:#10B981">&#10003;</td><td style="color:#10B981">&#10003;</td></tr>
+                <tr><td>Detection doublons</td><td style="color:#10B981">&#10003;</td><td style="color:#10B981">&#10003;</td><td style="color:#10B981">&#10003;</td><td style="color:#10B981">&#10003;</td></tr>
+
+                <tr><td><strong>Analyse Audio</strong></td><td></td><td></td><td></td><td></td></tr>
+                <tr><td>Detection BPM (tempo)</td><td style="color:#10B981">&#10003;</td><td style="color:#10B981">&#10003;</td><td style="color:#10B981">&#10003;</td><td style="color:#10B981">&#10003;</td></tr>
+                <tr><td>Detection Key (tonalite Camelot/Open Key)</td><td style="color:#10B981">&#10003;</td><td style="color:#10B981">&#10003;</td><td style="color:#10B981">&#10003;</td><td style="color:#10B981">&#10003;</td></tr>
+                <tr><td>Analyse Energy (1-10)</td><td style="color:#10B981">&#10003;</td><td style="color:#10B981">&#10003;</td><td style="color:#10B981">&#10003;</td><td style="color:#10B981">&#10003;</td></tr>
+                <tr><td>Detection structure (Intro, Verse, Drop, Outro)</td><td style="color:#10B981">&#10003;</td><td style="color:#10B981">&#10003;</td><td style="color:#10B981">&#10003;</td><td style="color:#10B981">&#10003;</td></tr>
+                <tr><td>Waveform multi-bande coloree (RGB)</td><td style="color:#10B981">&#10003;</td><td style="color:#10B981">&#10003;</td><td style="color:#10B981">&#10003;</td><td style="color:#10B981">&#10003;</td></tr>
+                <tr><td>Beat Grid automatique</td><td style="color:#10B981">&#10003;</td><td style="color:#10B981">&#10003;</td><td style="color:#10B981">&#10003;</td><td style="color:#10B981">&#10003;</td></tr>
+                <tr><td>Classification Genre + Mood IA</td><td style="color:#EF4444">&#10007;</td><td style="color:#10B981">&#10003;</td><td style="color:#10B981">&#10003;</td><td style="color:#10B981">&#10003;</td></tr>
+
+                <tr><td><strong>Hot Cues</strong></td><td></td><td></td><td></td><td></td></tr>
+                <tr><td>8 Hot Cues par piste</td><td style="color:#10B981">&#10003;</td><td style="color:#10B981">&#10003;</td><td style="color:#10B981">&#10003;</td><td style="color:#10B981">&#10003;</td></tr>
+                <tr><td>Placement automatique IA</td><td style="color:#10B981">&#10003;</td><td style="color:#10B981">&#10003;</td><td style="color:#10B981">&#10003;</td><td style="color:#10B981">&#10003;</td></tr>
+                <tr><td>Export vers DJ Software (Rekordbox, Serato, Traktor, VDJ)</td><td style="color:#10B981">&#10003;</td><td style="color:#10B981">&#10003;</td><td style="color:#10B981">&#10003;</td><td style="color:#10B981">&#10003;</td></tr>
+
+                <tr><td><strong>Lecture Audio</strong></td><td></td><td></td><td></td><td></td></tr>
+                <tr><td>Lecture audio</td><td style="color:#F59E0B">5 min max</td><td style="color:#10B981">Illimitee</td><td style="color:#10B981">Illimitee</td><td style="color:#10B981">Illimitee</td></tr>
+                <tr><td>Preview au survol</td><td style="color:#10B981">&#10003;</td><td style="color:#10B981">&#10003;</td><td style="color:#10B981">&#10003;</td><td style="color:#10B981">&#10003;</td></tr>
+
+                <tr><td><strong>Preparation</strong></td><td></td><td></td><td></td><td></td></tr>
+                <tr><td>Preparation de Set (compatibilite, energy curve)</td><td style="color:#10B981">&#10003;</td><td style="color:#10B981">&#10003;</td><td style="color:#10B981">&#10003;</td><td style="color:#10B981">&#10003;</td></tr>
+                <tr><td>Preparation Soiree (phases, timeline, IA)</td><td style="color:#10B981">&#10003;</td><td style="color:#10B981">&#10003;</td><td style="color:#10B981">&#10003;</td><td style="color:#10B981">&#10003;</td></tr>
+                <tr><td>Normalisation LUFS (Spotify, Club, YouTube)</td><td style="color:#10B981">&#10003;</td><td style="color:#10B981">&#10003;</td><td style="color:#10B981">&#10003;</td><td style="color:#10B981">&#10003;</td></tr>
+
+                <tr><td><strong>IA et Avance</strong></td><td></td><td></td><td></td><td></td></tr>
+                <tr><td>Separation de Stems (Vocals, Drums, Bass, Other)</td><td style="color:#EF4444">&#10007;</td><td style="color:#10B981">&#10003;</td><td style="color:#10B981">&#10003;</td><td style="color:#10B981">&#10003;</td></tr>
+                <tr><td>Suggestions IA (BPM + Key + Energy)</td><td style="color:#EF4444">&#10007;</td><td style="color:#10B981">&#10003;</td><td style="color:#10B981">&#10003;</td><td style="color:#10B981">&#10003;</td></tr>
+                <tr><td>Streaming (Spotify, Deezer, Tidal, SoundCloud, etc.)</td><td style="color:#EF4444">&#10007;</td><td style="color:#10B981">&#10003;</td><td style="color:#10B981">&#10003;</td><td style="color:#10B981">&#10003;</td></tr>
+                <tr><td>Export Ableton Live (.als)</td><td style="color:#EF4444">&#10007;</td><td style="color:#10B981">&#10003;</td><td style="color:#10B981">&#10003;</td><td style="color:#10B981">&#10003;</td></tr>
+
+                <tr><td><strong>Modules Premium</strong></td><td></td><td></td><td></td><td></td></tr>
+                <tr><td>BeatMate Live (detection temps reel Rekordbox/VDJ)</td><td style="color:#EF4444">&#10007;</td><td style="color:#EF4444">&#10007;</td><td style="color:#EF4444">&#10007;</td><td style="color:#10B981">&#10003;</td></tr>
+                <tr><td>DJ Performance (2/4 decks, beat sync, crossfader, EQ)</td><td style="color:#EF4444">&#10007;</td><td style="color:#EF4444">&#10007;</td><td style="color:#EF4444">&#10007;</td><td style="color:#10B981">&#10003;</td></tr>
+                <tr><td>Studio Montage (remix, mashup, medley, megamix)</td><td style="color:#EF4444">&#10007;</td><td style="color:#EF4444">&#10007;</td><td style="color:#EF4444">&#10007;</td><td style="color:#10B981">&#10003;</td></tr>
+                <tr><td>Automix IA (transitions automatiques)</td><td style="color:#EF4444">&#10007;</td><td style="color:#EF4444">&#10007;</td><td style="color:#EF4444">&#10007;</td><td style="color:#10B981">&#10003;</td></tr>
+                <tr><td>Effets DSP (Reverb, Delay, Flanger, Filter, etc.)</td><td style="color:#EF4444">&#10007;</td><td style="color:#EF4444">&#10007;</td><td style="color:#EF4444">&#10007;</td><td style="color:#10B981">&#10003;</td></tr>
+                <tr><td>Export Video (YouTube, TikTok, Instagram)</td><td style="color:#EF4444">&#10007;</td><td style="color:#EF4444">&#10007;</td><td style="color:#EF4444">&#10007;</td><td style="color:#10B981">&#10003;</td></tr>
+                <tr><td>RubberBand Pro (time-stretch qualite studio)</td><td style="color:#EF4444">&#10007;</td><td style="color:#EF4444">&#10007;</td><td style="color:#EF4444">&#10007;</td><td style="color:#10B981">&#10003;</td></tr>
+            </tbody>
+        </table>
+
+        <!-- ============================================ -->
+        <!-- FONCTIONNALITES DETAILLEES -->
+        <!-- ============================================ -->
+        <h2>Fonctionnalites detaillees</h2>
+
+        <h3>Bibliotheque et Import</h3>
+        <div class="feature-grid">
+            <div class="feature-card"><div class="feature-icon">&#128218;</div><h4>Bibliotheque professionnelle</h4><p>14 colonnes : Titre, Artiste, Album, BPM, Key, Camelot, Energy, Duree, Genre, Note, Cues, Stems, Annee, Plays. Tri sur toutes les colonnes. Recherche full-text instantanee.</p></div>
+            <div class="feature-card"><div class="feature-icon">&#128229;</div><h4>Import multi-source</h4><p>Drag & drop, parcourir fichiers/dossiers. Formats : MP3, WAV, FLAC, AIFF, AAC, OGG, M4A, WMA. Import depuis Rekordbox (XML), Serato, Traktor (NML), VirtualDJ, Engine DJ, djay Pro.</p></div>
+            <div class="feature-card"><div class="feature-icon">&#127911;</div><h4>Lecture des tags ID3</h4><p>BPM, Key, Artist, Album, Genre, Year, Comment lus automatiquement via TagLib. Les donnees analysees par d'autres logiciels (Rekordbox, VirtualDJ) sont recuperees.</p></div>
+            <div class="feature-card"><div class="feature-icon">&#128269;</div><h4>Filtres avances</h4><p>Filtrez par BPM range, Key (Camelot), Genre, Energy (1-10), Rating (etoiles). Smart Playlists avec regles automatiques (AND/OR).</p></div>
+        </div>
+
+        <h3>Analyse Audio</h3>
+        <div class="feature-grid">
+            <div class="feature-card"><div class="feature-icon">&#127926;</div><h4>Detection BPM</h4><p>Algorithme hybride (autocorrelation + FFT). Precision haute. Mode Normal (tempo fixe) ou Dynamique (tempo variable). Plage configurable (60-200 BPM).</p></div>
+            <div class="feature-card"><div class="feature-icon">&#127929;</div><h4>Detection Key</h4><p>Analyse chromatique + classification ML. Notation Camelot (1A-12B), Open Key, ou classique (Am, C, etc.). Compatible Mixed In Key.</p></div>
+            <div class="feature-card"><div class="feature-icon">&#9889;</div><h4>Energy (1-10)</h4><p>Score d'energie comme Mixed In Key. Prend en compte le loudness, le rythme et le contenu spectral. Ideal pour planifier la progression d'un set.</p></div>
+            <div class="feature-card"><div class="feature-icon">&#127760;</div><h4>Waveform RGB</h4><p>Waveform multi-bande coloree (bass=rouge, mid=vert, treble=bleu) comme Rekordbox. Cache pour chargement instantane.</p></div>
+            <div class="feature-card"><div class="feature-icon">&#128200;</div><h4>Structure musicale</h4><p>Detection automatique : Intro, Verse, Chorus, Build, Drop, Bridge, Outro. Utilisee pour le placement intelligent des Hot Cues.</p></div>
+            <div class="feature-card"><div class="feature-icon">&#129302;</div><h4>Stems IA (Demucs)</h4><span class="tag">Personal+</span><p>Separation en 4 stems : Vocals, Drums, Bass, Other. Reseau neuronal Demucs. Premiere separation ~30s, ensuite cache.</p></div>
+        </div>
+
+        <h3>Hot Cues</h3>
+        <div class="feature-grid">
+            <div class="feature-card"><div class="feature-icon">&#127919;</div><h4>8 Hot Cues par piste</h4><p>Placement manuel ou automatique IA. 16 couleurs DJ (palette Rekordbox/Serato). Snap-to-beat grid. Renommage et reorganisation.</p></div>
+            <div class="feature-card"><div class="feature-icon">&#129302;</div><h4>Auto-generation IA</h4><p>L'IA place automatiquement 8 cues : Mix-in, Verse, Buildup, Drop 1, Breakdown, Drop 2, Pre-outro, Mix-out. Basee sur l'analyse spectrale et l'energie.</p></div>
+            <div class="feature-card"><div class="feature-icon">&#128228;</div><h4>Export DJ Software</h4><p>Export vers Rekordbox (XML), Serato (Markers2), Traktor (NML CUE_V2), VirtualDJ (POI), Engine DJ. Couleurs et positions preservees.</p></div>
+        </div>
+
+        <h3>Preparation de Set</h3>
+        <div class="feature-grid">
+            <div class="feature-card"><div class="feature-icon">&#127925;</div><h4>Score de compatibilite</h4><p>Score 0-100 entre chaque paire de morceaux : Key Camelot (30pts), BPM (25pts), Energy flow (20pts), Genre (15pts), Variete (10pts).</p></div>
+            <div class="feature-card"><div class="feature-icon">&#128200;</div><h4>Courbe d'energie</h4><p>Visualisation Studio-style de la progression d'energie du set. Gradient vert-jaune-rouge. Score global du set.</p></div>
+            <div class="feature-card"><div class="feature-icon">&#129302;</div><h4>IA Auto-Arrange</h4><p>Tri automatique par BPM, Key harmonique, ou Energy. Fill gaps : l'IA insere des morceaux pour combler les transitions faibles.</p></div>
+            <div class="feature-card"><div class="feature-icon">&#128190;</div><h4>Persistance</h4><p>Le set est sauvegarde automatiquement en JSON. Drag & drop pour reordonner. Export M3U, JSON, HTML.</p></div>
+        </div>
+
+        <h3>Preparation Soiree</h3>
+        <div class="feature-grid">
+            <div class="feature-card"><div class="feature-icon">&#127878;</div><h4>Planification par phases</h4><p>5 phases par defaut : Accueil, Cocktail, Diner, Danse, Fin. Chaque phase a genre, BPM cible, energy, duree et couleur.</p></div>
+            <div class="feature-card"><div class="feature-icon">&#128197;</div><h4>Timeline interactive</h4><p>Timeline visuelle avec drag-resize des phases. Presets d'energie : Classic DJ Set, Double Drop, Marathon, Progressive, Wedding.</p></div>
+            <div class="feature-card"><div class="feature-icon">&#129302;</div><h4>IA Auto-Fill</h4><p>Remplissage automatique des phases avec les morceaux les plus adaptes (genre, BPM, energy). Compatibilite harmonique Camelot.</p></div>
+            <div class="feature-card"><div class="feature-icon">&#9745;</div><h4>Checklist DJ</h4><p>5 items : Sono, Lumieres, Rider, Backup USB, Setlist imprimee. Sauvegarde persistante.</p></div>
+        </div>
+
+        <h3>Modules Premium <span class="tag premium-only">PREMIUM</span></h3>
+        <div class="feature-grid">
+            <div class="feature-card"><div class="feature-icon">&#127918;</div><h4>BeatMate Live</h4><p>Detection en temps reel de ce qui joue dans Rekordbox ou VirtualDJ. Suggestions du prochain morceau compatible. Historique. Waveform RGB live.</p></div>
+            <div class="feature-card"><div class="feature-icon">&#127927;</div><h4>DJ Performance</h4><p>2/4 decks avec waveforms synchronisees. Beat Sync (quantize). Crossfader configurable. EQ 3 bandes. Key Lock. Auto-Gain.</p></div>
+            <div class="feature-card"><div class="feature-icon">&#127908;</div><h4>Studio Montage</h4><p>DAW professionnel pour remix, mashup, medley, megamix. Timeline multi-pistes. Clips audio. Automation. Beat grid synchronise.</p></div>
+            <div class="feature-card"><div class="feature-icon">&#127932;</div><h4>Effets DSP</h4><p>Reverb (convolution), Delay (sync BPM), Flanger, Phaser, Chorus, Ladder Filter, Bitcrusher, Vinyl Effect, Compressor, Gate.</p></div>
+            <div class="feature-card"><div class="feature-icon">&#129302;</div><h4>Automix IA</h4><p>L'IA analyse la structure et place les transitions automatiquement. 6+ types : Crossfade, EQ fade, Echo out, Cut, Backspin, Filter sweep.</p></div>
+            <div class="feature-card"><div class="feature-icon">&#127909;</div><h4>Export Video</h4><p>MP4 avec visualisation waveform. Formats optimises pour YouTube, TikTok, Instagram. Tracklist integree.</p></div>
+        </div>
+
+        <h3>Technologies</h3>
+        <div class="feature-grid">
+            <div class="feature-card"><h4>JUCE 8.0.4</h4><p>Framework audio/UI multiplateforme. Lecture audio temps reel. Interface graphique GPU-acceleree.</p></div>
+            <div class="feature-card"><h4>TagLib 2.0</h4><p>Lecture/ecriture tags ID3v2 (MP3, FLAC, WAV, AIFF, OGG, M4A). BPM, Key, Artist, Album, Genre, Year.</p></div>
+            <div class="feature-card"><h4>Demucs (Meta AI)</h4><p>Reseau neuronal pour la separation de stems. 4 bandes : vocals, drums, bass, other.</p></div>
+            <div class="feature-card"><h4>ONNX Runtime</h4><p>Inference ML locale (pas de cloud). Classification genre, mood, energie.</p></div>
+            <div class="feature-card"><h4>RubberBand</h4><p>Time-stretching et pitch-shifting qualite studio. Preserve la qualite audio.</p></div>
+            <div class="feature-card"><h4>SQLite3</h4><p>Base de donnees locale. Recherche full-text (FTS5). Migration automatique des schemas.</p></div>
+        </div>
+
+        <!-- ============================================ -->
+        <!-- LICENCE -->
+        <!-- ============================================ -->
+        <h2>Systeme de licence</h2>
+        <div class="section">
+            <p><strong>1 licence = 1 machine.</strong> Chaque PC necessite sa propre cle de licence, liee au hardware ID unique de la machine.</p>
+            <p>La licence est verifiee localement (pas de connexion internet requise apres activation). Le fichier de licence est chiffre et signe avec le hardware ID.</p>
+            <p><strong>Format des cles :</strong> XXXXX-XXXXX-XXXXX-XXXXX (prefixe P=Personal, R=Professional, E=Premium; 2e caractere M=Mensuel, A=Annuel)</p>
+            <p><strong>Anti-piratage :</strong> Trial chiffre avec hardware ID, detection de manipulation d'horloge, fichier de licence signe SHA256.</p>
+        </div>
+
+        <!-- ============================================ -->
+        <!-- FAQ -->
+        <!-- ============================================ -->
+        <h2>Questions frequentes</h2>
+        <div class="faq">
+            <div class="faq-item"><h4>Puis-je utiliser la meme licence sur plusieurs PC ?</h4><p>Non. Chaque licence est liee a une seule machine via son hardware ID (CPU + carte mere + disque). Si vous avez 2 PC, vous avez besoin de 2 licences.</p></div>
+            <div class="faq-item"><h4>Que se passe-t-il apres les 7 jours d'essai ?</h4><p>La lecture audio est limitee a 5 minutes par morceau. Un message s'affiche quand la limite est atteinte. Les modules Live et Studio sont bloques. Toutes les autres fonctionnalites restent accessibles.</p></div>
+            <div class="faq-item"><h4>Puis-je passer d'un forfait a l'autre ?</h4><p>Oui. Entrez simplement la nouvelle cle dans Parametres > Licence. L'ancienne cle est desactivee automatiquement.</p></div>
+            <div class="faq-item"><h4>Comment activer ma licence ?</h4><p>Allez dans Parametres > Licence > entrez votre cle > cliquez "Activer". La licence est verifiee et stockee localement sur votre machine.</p></div>
+            <div class="faq-item"><h4>Les mises a jour sont-elles incluses ?</h4><p>Oui, toutes les mises a jour sont incluses pendant la duree de votre abonnement. Les forfaits Professional et Premium recoivent les mises a jour en avance (acces beta).</p></div>
+            <div class="faq-item"><h4>Mes fichiers audio sont-ils modifies ?</h4><p>Non. BeatMate ne modifie jamais vos fichiers audio. Toutes les donnees (BPM, Key, cues, playlists) sont stockees dans la base de donnees locale.</p></div>
+            <div class="faq-item"><h4>Quels formats audio sont supportes ?</h4><p>MP3, WAV, FLAC, AIFF, AAC, OGG, M4A, WMA, ALAC. Tous les formats standards sont supportes.</p></div>
+            <div class="faq-item"><h4>Comment importer depuis Rekordbox ?</h4><p>BeatMate detecte automatiquement Rekordbox. Si la base est chiffree (Rekordbox 6+), exportez en XML depuis Rekordbox (File > Export collection as XML). BeatMate lit l'XML avec tous les BPM, Key, cues et playlists.</p></div>
+            <div class="faq-item"><h4>La separation de stems fonctionne-t-elle hors ligne ?</h4><p>Oui. Le modele Demucs tourne localement sur votre CPU. Aucune connexion internet n'est necessaire. Premiere separation ~30 secondes, ensuite les resultats sont caches.</p></div>
+            <div class="faq-item"><h4>Que contient le module DJ et Studio ?</h4><p>Mix DJ (2/4 decks, beat sync, crossfader, EQ), montage audio (timeline, clips, automation), remix/mashup/medley/megamix, effets DSP (reverb, delay, filter, etc.), automix IA, export audio et video.</p></div>
+        </div>
+
+        <footer>
+            <p><strong>BeatMate V11 Professional</strong> &copy; 2026 Sebastien Sainte-Foi</p>
+            <p>Contact : support@beatmate.app</p>
+            <p style="margin-top: 10px; font-size: 0.9em;">Developpe avec JUCE, TagLib, Demucs, ONNX Runtime, RubberBand, SQLite3</p>
+        </footer>
+    </div>
+</body>
+</html>

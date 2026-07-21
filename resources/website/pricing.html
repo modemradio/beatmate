@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BeatMate V11 - Tarifs et Forfaits</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', sans-serif; background: #0a0a14; color: #f1f5f9; line-height: 1.7; }
+
+        /* === NAVBAR === */
+        .navbar { background: #0d0d1a; border-bottom: 1px solid #1E293B; padding: 0 40px; display: flex; align-items: center; justify-content: space-between; height: 64px; position: sticky; top: 0; z-index: 100; }
+        .navbar-brand { font-size: 1.4em; font-weight: bold; color: #f1f5f9; text-decoration: none; display: flex; align-items: center; gap: 10px; }
+        .navbar-brand span { background: linear-gradient(135deg, #3B82F6, #8B5CF6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .navbar-links { display: flex; gap: 32px; list-style: none; }
+        .navbar-links a { color: #94A3B8; text-decoration: none; font-size: 0.95em; font-weight: 500; transition: color 0.2s; }
+        .navbar-links a:hover, .navbar-links a.active { color: #3B82F6; }
+
+        /* === LAYOUT === */
+        .container { max-width: 1200px; margin: 0 auto; padding: 40px 20px; }
+        .page-header { text-align: center; padding: 60px 0 40px; }
+        .page-header h1 { font-size: 2.8em; margin-bottom: 10px; background: linear-gradient(135deg, #3B82F6, #8B5CF6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .page-header p { color: #64748B; font-size: 1.2em; }
+
+        /* === PLANS === */
+        .plans { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 24px; margin-bottom: 60px; }
+        .plan { background: #1a1a2e; border-radius: 16px; padding: 32px 24px; border: 1px solid #2a2a44; transition: transform 0.3s, border-color 0.3s; position: relative; }
+        .plan:hover { transform: translateY(-4px); border-color: #3B82F6; }
+        .plan.popular { border: 2px solid #8B5CF6; }
+        .plan.premium { border: 2px solid #F59E0B; background: linear-gradient(135deg, #1a1a2e, #2a2020); }
+        .plan-name { font-size: 1.5em; font-weight: bold; margin-bottom: 4px; color: #f1f5f9; }
+        .plan-price { font-size: 2.2em; font-weight: bold; color: #3B82F6; margin: 16px 0 4px; }
+        .plan-price span { font-size: 0.4em; color: #64748B; font-weight: normal; }
+        .plan.premium .plan-price { color: #F59E0B; }
+        .plan-annual { color: #10B981; font-size: 0.95em; margin-bottom: 20px; }
+
+        .badge { display: inline-block; padding: 4px 12px; border-radius: 6px; font-size: 0.75em; font-weight: bold; letter-spacing: 1px; text-transform: uppercase; }
+        .badge-trial { background: #475569; color: #f1f5f9; }
+        .badge-personal { background: #3B82F6; color: white; }
+        .badge-pro { background: #8B5CF6; color: white; }
+        .badge-premium { background: linear-gradient(135deg, #F59E0B, #EF4444); color: white; }
+        .badge-popular { position: absolute; top: -14px; right: 20px; background: #8B5CF6; color: white; padding: 6px 16px; border-radius: 20px; font-size: 0.8em; font-weight: bold; letter-spacing: 1px; box-shadow: 0 4px 12px rgba(139,92,246,0.4); }
+        .badge-gold { position: absolute; top: -14px; right: 20px; background: linear-gradient(135deg, #F59E0B, #EF4444); color: white; padding: 6px 16px; border-radius: 20px; font-size: 0.8em; font-weight: bold; letter-spacing: 1px; box-shadow: 0 4px 12px rgba(245,158,11,0.4); }
+
+        .features { list-style: none; padding: 0; margin-bottom: 24px; }
+        .features li { padding: 8px 0; border-bottom: 1px solid #1E293B; display: flex; align-items: center; gap: 10px; font-size: 0.95em; color: #94A3B8; }
+        .features li:last-child { border: none; }
+        .check { color: #10B981; font-size: 1.2em; }
+        .cross { color: #EF4444; font-size: 1.2em; }
+        .lock { color: #F59E0B; font-size: 1.2em; }
+
+        .btn { display: block; text-align: center; padding: 14px; border-radius: 10px; text-decoration: none; font-weight: bold; font-size: 1.05em; transition: all 0.2s; cursor: pointer; border: none; }
+        .btn:hover { opacity: 0.85; transform: scale(1.02); }
+        .btn-trial { background: #475569; color: white; }
+        .btn-personal { background: #3B82F6; color: white; }
+        .btn-pro { background: #8B5CF6; color: white; }
+        .btn-premium { background: linear-gradient(135deg, #F59E0B, #EF4444); color: white; font-size: 1.1em; }
+
+        /* === TABLEAU COMPARATIF === */
+        h2 { font-size: 1.8em; margin: 50px 0 20px; color: #3B82F6; border-bottom: 2px solid #1E293B; padding-bottom: 10px; }
+        table { width: 100%; border-collapse: collapse; margin: 20px 0 40px; }
+        th, td { padding: 12px 16px; text-align: center; border-bottom: 1px solid #1E293B; color: #94A3B8; }
+        th { background: #1a1a2e; color: #64748B; font-size: 0.8em; text-transform: uppercase; letter-spacing: 1px; }
+        td:first-child { text-align: left; color: #f1f5f9; }
+        td strong { color: #f1f5f9; }
+        .t-check { color: #10B981; font-weight: bold; }
+        .t-cross { color: #EF4444; }
+
+        /* === FAQ === */
+        .faq { margin-top: 60px; }
+        .faq-item { background: #1a1a2e; border-radius: 10px; padding: 20px 24px; margin-bottom: 12px; border: 1px solid #2a2a44; cursor: pointer; transition: border-color 0.2s; }
+        .faq-item:hover { border-color: #3B82F6; }
+        .faq-item h4 { color: #f1f5f9; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
+        .faq-item h4::after { content: '+'; color: #3B82F6; font-size: 1.3em; }
+        .faq-item.open h4::after { content: '-'; }
+        .faq-item p { color: #94A3B8; margin: 0; font-size: 0.95em; display: none; }
+        .faq-item.open p { display: block; }
+
+        /* === FOOTER === */
+        footer { text-align: center; color: #475569; padding: 40px 20px; border-top: 1px solid #1E293B; margin-top: 60px; font-size: 0.9em; }
+        footer a { color: #3B82F6; text-decoration: none; }
+        footer a:hover { text-decoration: underline; }
+
+        /* === RESPONSIVE === */
+        @media (max-width: 768px) {
+            .navbar { padding: 0 16px; flex-direction: column; height: auto; padding: 12px 16px; gap: 10px; }
+            .navbar-links { gap: 16px; flex-wrap: wrap; justify-content: center; }
+            .plans { grid-template-columns: 1fr; }
+            .page-header h1 { font-size: 2em; }
+            table { font-size: 0.85em; }
+            th, td { padding: 8px 6px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- NAVBAR -->
+    <nav class="navbar">
+        <a href="index.html" class="navbar-brand"><span>BeatMate V11</span></a>
+        <ul class="navbar-links">
+            <li><a href="index.html">Accueil</a></li>
+            <li><a href="features.html">Fonctionnalites</a></li>
+            <li><a href="pricing.html" class="active">Tarifs</a></li>
+            <li><a href="download.html">Telecharger</a></li>
+        </ul>
+    </nav>
+
+    <div class="container">
+
+        <!-- HEADER -->
+        <div class="page-header">
+            <h1>Choisissez votre forfait</h1>
+            <p>Des formules adaptees a chaque DJ, du debutant au professionnel</p>
+        </div>
+
+        <!-- ============================================ -->
+        <!-- 4 PLANS -->
+        <!-- ============================================ -->
+        <div class="plans">
+
+            <!-- ESSAI GRATUIT -->
+            <div class="plan">
+                <span class="badge badge-trial">ESSAI GRATUIT</span>
+                <div class="plan-name">Essai Gratuit</div>
+                <div class="plan-price">0&euro; <span>/ 7 jours</span></div>
+                <div class="plan-annual">Decouvrez sans engagement</div>
+                <ul class="features">
+                    <li><span class="check">&#10003;</span> Toutes fonctionnalites de base</li>
+                    <li><span class="check">&#10003;</span> Bibliotheque illimitee</li>
+                    <li><span class="check">&#10003;</span> Analyse BPM, Key, Energy</li>
+                    <li><span class="check">&#10003;</span> Playlists intelligentes</li>
+                    <li><span class="check">&#10003;</span> Export Rekordbox, Serato, Traktor</li>
+                    <li><span class="lock">&#9888;</span> Lecture limitee 5 min / morceau</li>
+                    <li><span class="cross">&#10007;</span> BeatMate Live</li>
+                    <li><span class="cross">&#10007;</span> DJ et Studio</li>
+                </ul>
+                <a href="download.html" class="btn btn-trial">Telecharger</a>
+            </div>
+
+            <!-- PERSONAL -->
+            <div class="plan">
+                <span class="badge badge-personal">PERSONAL</span>
+                <div class="plan-name">Personal</div>
+                <div class="plan-price">9.99&euro; <span>/ mois</span></div>
+                <div class="plan-annual">ou <strong>89.99&euro; / an</strong> (economisez 30&euro;)</div>
+                <ul class="features">
+                    <li><span class="check">&#10003;</span> 1 licence = 1 machine</li>
+                    <li><span class="check">&#10003;</span> Toutes fonctionnalites de base</li>
+                    <li><span class="check">&#10003;</span> Lecture illimitee</li>
+                    <li><span class="check">&#10003;</span> Stems IA (Demucs)</li>
+                    <li><span class="check">&#10003;</span> Support email</li>
+                    <li><span class="check">&#10003;</span> Mises a jour incluses</li>
+                    <li><span class="cross">&#10007;</span> BeatMate Live</li>
+                    <li><span class="cross">&#10007;</span> DJ et Studio</li>
+                </ul>
+                <a href="checkout.html?plan=personal" class="btn btn-personal">Acheter - 9.99&euro;/mois</a>
+            </div>
+
+            <!-- PROFESSIONAL -->
+            <div class="plan popular">
+                <span class="badge-popular">POPULAIRE</span>
+                <span class="badge badge-pro">PROFESSIONAL</span>
+                <div class="plan-name">Professional</div>
+                <div class="plan-price">19.99&euro; <span>/ mois</span></div>
+                <div class="plan-annual">ou <strong>179.99&euro; / an</strong> (economisez 60&euro;)</div>
+                <ul class="features">
+                    <li><span class="check">&#10003;</span> 1 licence = 1 machine</li>
+                    <li><span class="check">&#10003;</span> Toutes fonctionnalites de base</li>
+                    <li><span class="check">&#10003;</span> Lecture illimitee</li>
+                    <li><span class="check">&#10003;</span> Stems IA (Demucs)</li>
+                    <li><span class="check">&#10003;</span> Support prioritaire</li>
+                    <li><span class="check">&#10003;</span> Mises a jour incluses</li>
+                    <li><span class="cross">&#10007;</span> BeatMate Live</li>
+                    <li><span class="cross">&#10007;</span> DJ et Studio</li>
+                </ul>
+                <a href="checkout.html?plan=professional" class="btn btn-pro">Acheter - 19.99&euro;/mois</a>
+            </div>
+
+            <!-- PREMIUM -->
+            <div class="plan premium">
+                <span class="badge-gold">TOUT INCLUS</span>
+                <span class="badge badge-premium">PREMIUM</span>
+                <div class="plan-name">Premium</div>
+                <div class="plan-price">29.99&euro; <span>/ mois</span></div>
+                <div class="plan-annual">ou <strong>269.99&euro; / an</strong> (economisez 90&euro;)</div>
+                <ul class="features">
+                    <li><span class="check">&#10003;</span> 1 licence = 1 machine</li>
+                    <li><span class="check">&#10003;</span> <strong>TOUT debloqu&eacute;</strong></li>
+                    <li><span class="check">&#10003;</span> BeatMate Live</li>
+                    <li><span class="check">&#10003;</span> DJ et Studio</li>
+                    <li><span class="check">&#10003;</span> Stems IA avances</li>
+                    <li><span class="check">&#10003;</span> Support VIP 24/7</li>
+                    <li><span class="check">&#10003;</span> Mises a jour incluses</li>
+                    <li><span class="check">&#10003;</span> Automix IA</li>
+                </ul>
+                <a href="checkout.html?plan=premium" class="btn btn-premium">Acheter - 29.99&euro;/mois</a>
+            </div>
+        </div>
+
+        <!-- ============================================ -->
+        <!-- TABLEAU COMPARATIF -->
+        <!-- ============================================ -->
+        <h2>Comparaison des forfaits</h2>
+        <div style="overflow-x: auto;">
+        <table>
+            <thead>
+                <tr>
+                    <th style="text-align:left">Fonctionnalite</th>
+                    <th>Essai Gratuit<br><small>0&euro;</small></th>
+                    <th>Personal<br><small>9.99&euro;/m</small></th>
+                    <th>Professional<br><small>19.99&euro;/m</small></th>
+                    <th>Premium<br><small>29.99&euro;/m</small></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td><strong>General</strong></td><td></td><td></td><td></td><td></td></tr>
+                <tr><td>Duree</td><td>7 jours</td><td>Mensuel / Annuel</td><td>Mensuel / Annuel</td><td>Mensuel / Annuel</td></tr>
+                <tr><td>Machines par licence</td><td>1</td><td>1</td><td>1</td><td>1</td></tr>
+                <tr><td>Mises a jour</td><td class="t-cross">&#10007;</td><td class="t-check">&#10003;</td><td class="t-check">&#10003;</td><td class="t-check">&#10003;</td></tr>
+                <tr><td>Support</td><td>FAQ</td><td>Email</td><td>Prioritaire</td><td>VIP 24/7</td></tr>
+
+                <tr><td><strong>Bibliotheque</strong></td><td></td><td></td><td></td><td></td></tr>
+                <tr><td>Import multi-format (MP3, WAV, FLAC, AIFF, OGG, M4A)</td><td class="t-check">&#10003;</td><td class="t-check">&#10003;</td><td class="t-check">&#10003;</td><td class="t-check">&#10003;</td></tr>
+                <tr><td>Playlists intelligentes</td><td class="t-check">&#10003;</td><td class="t-check">&#10003;</td><td class="t-check">&#10003;</td><td class="t-check">&#10003;</td></tr>
+                <tr><td>Detection doublons</td><td class="t-check">&#10003;</td><td class="t-check">&#10003;</td><td class="t-check">&#10003;</td><td class="t-check">&#10003;</td></tr>
+
+                <tr><td><strong>Analyse Audio</strong></td><td></td><td></td><td></td><td></td></tr>
+                <tr><td>Detection BPM / Key / Energy</td><td class="t-check">&#10003;</td><td class="t-check">&#10003;</td><td class="t-check">&#10003;</td><td class="t-check">&#10003;</td></tr>
+                <tr><td>Detection structure (Intro, Drop, Outro)</td><td class="t-check">&#10003;</td><td class="t-check">&#10003;</td><td class="t-check">&#10003;</td><td class="t-check">&#10003;</td></tr>
+                <tr><td>Hot Cues IA</td><td class="t-check">&#10003;</td><td class="t-check">&#10003;</td><td class="t-check">&#10003;</td><td class="t-check">&#10003;</td></tr>
+
+                <tr><td><strong>Lecture</strong></td><td></td><td></td><td></td><td></td></tr>
+                <tr><td>Lecture illimitee</td><td class="t-cross">&#10007; (5 min)</td><td class="t-check">&#10003;</td><td class="t-check">&#10003;</td><td class="t-check">&#10003;</td></tr>
+                <tr><td>Normalisation LUFS</td><td class="t-check">&#10003;</td><td class="t-check">&#10003;</td><td class="t-check">&#10003;</td><td class="t-check">&#10003;</td></tr>
+
+                <tr><td><strong>Fonctionnalites avancees</strong></td><td></td><td></td><td></td><td></td></tr>
+                <tr><td>Stems IA (Demucs)</td><td class="t-cross">&#10007;</td><td class="t-check">&#10003;</td><td class="t-check">&#10003;</td><td class="t-check">&#10003;</td></tr>
+                <tr><td>Export Rekordbox / Serato / Traktor</td><td class="t-check">&#10003;</td><td class="t-check">&#10003;</td><td class="t-check">&#10003;</td><td class="t-check">&#10003;</td></tr>
+                <tr><td>Streaming (Spotify, Deezer, Tidal)</td><td class="t-cross">&#10007;</td><td class="t-check">&#10003;</td><td class="t-check">&#10003;</td><td class="t-check">&#10003;</td></tr>
+                <tr><td>Controleurs MIDI avances</td><td class="t-cross">&#10007;</td><td class="t-cross">&#10007;</td><td class="t-check">&#10003;</td><td class="t-check">&#10003;</td></tr>
+
+                <tr><td><strong>Exclusif Premium</strong></td><td></td><td></td><td></td><td></td></tr>
+                <tr><td>BeatMate Live</td><td class="t-cross">&#10007;</td><td class="t-cross">&#10007;</td><td class="t-cross">&#10007;</td><td class="t-check">&#10003;</td></tr>
+                <tr><td>DJ et Studio</td><td class="t-cross">&#10007;</td><td class="t-cross">&#10007;</td><td class="t-cross">&#10007;</td><td class="t-check">&#10003;</td></tr>
+                <tr><td>Automix IA</td><td class="t-cross">&#10007;</td><td class="t-cross">&#10007;</td><td class="t-cross">&#10007;</td><td class="t-check">&#10003;</td></tr>
+                <tr><td>Export video</td><td class="t-cross">&#10007;</td><td class="t-cross">&#10007;</td><td class="t-cross">&#10007;</td><td class="t-check">&#10003;</td></tr>
+            </tbody>
+        </table>
+        </div>
+
+        <!-- ============================================ -->
+        <!-- FAQ -->
+        <!-- ============================================ -->
+        <div class="faq">
+            <h2>Questions frequentes</h2>
+
+            <div class="faq-item open">
+                <h4>Puis-je changer de forfait a tout moment ?</h4>
+                <p>Oui, vous pouvez passer a un forfait superieur a tout moment. La difference de prix sera calculee au prorata. Pour un passage a un forfait inferieur, le changement prendra effet a la fin de votre periode de facturation en cours.</p>
+            </div>
+
+            <div class="faq-item">
+                <h4>Ma licence fonctionne-t-elle sur combien de machines ?</h4>
+                <p>Chaque licence est valable pour 1 machine. Si vous changez d'ordinateur, vous pouvez desactiver la licence sur l'ancien appareil et l'activer sur le nouveau depuis votre espace client ou dans Parametres &gt; Licence.</p>
+            </div>
+
+            <div class="faq-item">
+                <h4>Que se passe-t-il apres les 7 jours d'essai gratuit ?</h4>
+                <p>A la fin de la periode d'essai, BeatMate V11 passera en mode lecture seule. Vous pourrez toujours consulter votre bibliotheque mais les fonctionnalites d'analyse, d'export et de lecture seront desactivees. Aucun paiement ne sera preleve automatiquement.</p>
+            </div>
+
+            <div class="faq-item">
+                <h4>Proposez-vous un remboursement ?</h4>
+                <p>Oui, nous offrons une garantie satisfait ou rembourse de 30 jours pour tous les forfaits payants. Si BeatMate V11 ne repond pas a vos attentes, contactez notre support pour obtenir un remboursement integral, sans condition.</p>
+            </div>
+
+            <div class="faq-item">
+                <h4>Les mises a jour sont-elles incluses dans mon abonnement ?</h4>
+                <p>Oui, toutes les mises a jour (corrections de bugs, nouvelles fonctionnalites, ameliorations de performances) sont incluses dans votre abonnement tant qu'il est actif. Les abonnes Professional et Premium beneficient en plus d'un acces anticipe aux versions beta.</p>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- FOOTER -->
+    <footer>
+        <p>&copy; 2026 BeatMate V11 Professional. Tous droits reserves.</p>
+        <p style="margin-top: 8px;">
+            <a href="index.html">Accueil</a> &middot;
+            <a href="features.html">Fonctionnalites</a> &middot;
+            <a href="pricing.html">Tarifs</a> &middot;
+            <a href="download.html">Telecharger</a>
+        </p>
+    </footer>
+
+    <script>
+        // FAQ toggle
+        document.querySelectorAll('.faq-item').forEach(item => {
+            item.addEventListener('click', () => {
+                item.classList.toggle('open');
+            });
+        });
+    </script>
+
+</body>
+</html>

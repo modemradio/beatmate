@@ -1,0 +1,15 @@
+build-mac/
+build/
+DerivedData/
+*.dmg
+.DS_Store
+.ccache/
+
+models/
+third_party/onnxruntime/lib/
+
+*.o
+*.obj
+*.user
+.vs/
+.idea/

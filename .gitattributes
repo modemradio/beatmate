@@ -1,0 +1,21 @@
+* text=auto
+
+*.sh text eol=lf
+*.command text eol=lf
+*.plist text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+*.cmake text eol=lf
+CMakeLists.txt text eol=lf
+
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.icns binary
+*.dylib binary
+*.onnx binary
+*.wav binary
+*.ttf binary
+*.otf binary

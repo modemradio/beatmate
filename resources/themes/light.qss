@@ -1,0 +1,123 @@
+/* ============================================
+   BeatMate V11 Professional - Light Theme
+   ============================================ */
+
+QWidget {
+    background-color: #F5F5F5;
+    color: #1A1A1A;
+    font-family: "Segoe UI", "Inter", "Helvetica Neue", Arial, sans-serif;
+    font-size: 13px;
+    selection-background-color: #0078D4;
+    selection-color: #FFFFFF;
+}
+
+QMainWindow {
+    background-color: #F5F5F5;
+}
+
+QMenuBar {
+    background-color: #FFFFFF;
+    border-bottom: 1px solid #E0E0E0;
+}
+
+QMenuBar::item:selected {
+    background-color: #E8E8E8;
+}
+
+QMenu {
+    background-color: #FFFFFF;
+    border: 1px solid #D0D0D0;
+    border-radius: 8px;
+}
+
+QMenu::item:selected {
+    background-color: #0078D4;
+    color: white;
+}
+
+QToolBar {
+    background-color: #FFFFFF;
+    border-bottom: 1px solid #E0E0E0;
+}
+
+QPushButton {
+    background-color: #FFFFFF;
+    border: 1px solid #D0D0D0;
+    border-radius: 6px;
+    padding: 8px 20px;
+    color: #1A1A1A;
+}
+
+QPushButton:hover {
+    background-color: #F0F0F0;
+}
+
+QPushButton:pressed {
+    background-color: #0078D4;
+    color: white;
+}
+
+QLineEdit {
+    background-color: #FFFFFF;
+    border: 1px solid #D0D0D0;
+    border-radius: 6px;
+    padding: 8px 12px;
+}
+
+QLineEdit:focus {
+    border-color: #0078D4;
+}
+
+QTableView, QTreeView, QListView {
+    background-color: #FFFFFF;
+    alternate-background-color: #F8F8F8;
+    border: 1px solid #E0E0E0;
+    gridline-color: #F0F0F0;
+}
+
+QHeaderView::section {
+    background-color: #F5F5F5;
+    color: #666666;
+    border-bottom: 2px solid #E0E0E0;
+}
+
+QStatusBar {
+    background-color: #FFFFFF;
+    border-top: 1px solid #E0E0E0;
+    color: #666666;
+}
+
+QSlider::groove:horizontal {
+    background-color: #E0E0E0;
+}
+
+QSlider::handle:horizontal {
+    background-color: #0078D4;
+    border: 2px solid #FFFFFF;
+}
+
+QProgressBar {
+    background-color: #E0E0E0;
+    border: none;
+}
+
+QProgressBar::chunk {
+    background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
+        stop:0 #0078D4, stop:1 #4A90E2);
+}
+
+QScrollBar:vertical {
+    background-color: transparent;
+    width: 8px;
+}
+
+QScrollBar::handle:vertical {
+    background-color: #C0C0C0;
+    border-radius: 4px;
+}
+
+QFrame[class="card"] {
+    background-color: #FFFFFF;
+    border: 1px solid #E0E0E0;
+    border-radius: 12px;
+}

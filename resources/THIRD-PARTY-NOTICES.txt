@@ -1,0 +1,41 @@
+BeatMate — Mentions des composants tiers
+=========================================
+
+Ce logiciel inclut des composants tiers soumis aux licences suivantes.
+Les textes complets des licences sont disponibles aux adresses indiquées.
+
+Modèles d'empreinte sonore CLAP
+-------------------------------
+CLAP music_audioset (similarité musicale) — LAION / auteurs de LAION CLAP
+Licence : CC0 1.0 Universal (domaine public)
+Source : https://huggingface.co/lukewys/laion_clap
+
+larger_clap_music (tags de genre et d'ambiance) — LAION e.V.
+Licence : Apache License 2.0
+Source : https://huggingface.co/laion/larger_clap_music
+Copyright (c) LAION.
+
+Ces modèles servent au calcul local d'empreintes de sonorité. Aucune donnée
+n'est envoyée sur internet : ils s'exécutent intégralement sur cet ordinateur.
+Texte de la licence Apache : http://www.apache.org/licenses/LICENSE-2.0
+
+Moteur d'inférence
+------------------
+ONNX Runtime — Microsoft Corporation
+Licence : MIT — https://github.com/microsoft/onnxruntime
+
+Bibliothèques principales
+-------------------------
+JUCE (framework applicatif) — licence commerciale JUCE / https://juce.com
+TagLib (métadonnées audio) — LGPL 2.1 / MPL 1.1 — https://taglib.org
+SQLite (base de données) — Domaine public — https://sqlite.org
+spdlog (journalisation) — MIT — https://github.com/gabime/spdlog
+nlohmann/json — MIT — https://github.com/nlohmann/json
+KissFFT — BSD-3-Clause — https://github.com/mborgerding/kissfft
+SoundTouch — LGPL 2.1 — https://www.surina.net/soundtouch
+Signalsmith Stretch — MIT — https://github.com/Signalsmith-Audio/signalsmith-stretch
+LAME (export MP3, binaire externe) — LGPL — https://lame.sourceforge.io
+FFmpeg (export vidéo, binaire externe) — LGPL/GPL — https://ffmpeg.org
+
+Conformément à la licence Apache 2.0, ce fichier constitue le fichier
+NOTICE accompagnant la redistribution des poids du modèle CLAP.

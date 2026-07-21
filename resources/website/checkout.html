@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BeatMate V11 - Paiement Securise</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', sans-serif; background: #0a0a14; color: #f1f5f9; line-height: 1.7; }
+
+        /* === NAVBAR === */
+        .navbar { background: #0d0d1a; border-bottom: 1px solid #1E293B; padding: 0 40px; display: flex; align-items: center; justify-content: space-between; height: 64px; position: sticky; top: 0; z-index: 100; }
+        .navbar-brand { font-size: 1.4em; font-weight: bold; color: #f1f5f9; text-decoration: none; display: flex; align-items: center; gap: 10px; }
+        .navbar-brand span { background: linear-gradient(135deg, #3B82F6, #8B5CF6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .navbar-links { display: flex; gap: 32px; list-style: none; }
+        .navbar-links a { color: #94A3B8; text-decoration: none; font-size: 0.95em; font-weight: 500; transition: color 0.2s; }
+        .navbar-links a:hover, .navbar-links a.active { color: #3B82F6; }
+
+        /* === LAYOUT === */
+        .container { max-width: 800px; margin: 0 auto; padding: 40px 20px; }
+        .page-header { text-align: center; padding: 40px 0 30px; }
+        .page-header h1 { font-size: 2.2em; margin-bottom: 10px; background: linear-gradient(135deg, #3B82F6, #8B5CF6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .page-header p { color: #64748B; font-size: 1.1em; }
+
+        /* === SECURITY BADGE === */
+        .security-banner { background: #0f1f0f; border: 1px solid #166534; border-radius: 10px; padding: 14px 20px; text-align: center; margin-bottom: 30px; display: flex; align-items: center; justify-content: center; gap: 20px; flex-wrap: wrap; }
+        .security-banner span { color: #4ade80; font-size: 0.9em; display: flex; align-items: center; gap: 6px; }
+        .security-banner .lock-icon { font-size: 1.2em; }
+
+        /* === ORDER SUMMARY === */
+        .order-summary { background: #1a1a2e; border-radius: 14px; padding: 28px; border: 1px solid #2a2a44; margin-bottom: 24px; }
+        .order-summary h2 { font-size: 1.3em; color: #f1f5f9; margin-bottom: 16px; border: none; padding: 0; }
+        .order-detail { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #1E293B; }
+        .order-detail:last-child { border: none; }
+        .order-detail .label { color: #94A3B8; }
+        .order-detail .value { color: #f1f5f9; font-weight: bold; }
+        .order-detail .value.price { color: #3B82F6; font-size: 1.3em; }
+        .order-detail .value.premium-price { color: #F59E0B; font-size: 1.3em; }
+
+        /* === TOGGLE === */
+        .billing-toggle { display: flex; align-items: center; justify-content: center; gap: 16px; margin: 16px 0; }
+        .billing-toggle label { color: #94A3B8; font-size: 0.95em; cursor: pointer; transition: color 0.2s; }
+        .billing-toggle label.active { color: #f1f5f9; font-weight: bold; }
+        .toggle-switch { position: relative; width: 50px; height: 26px; background: #2a2a44; border-radius: 13px; cursor: pointer; transition: background 0.3s; }
+        .toggle-switch.annual { background: #10B981; }
+        .toggle-switch::after { content: ''; position: absolute; top: 3px; left: 3px; width: 20px; height: 20px; background: white; border-radius: 50%; transition: transform 0.3s; }
+        .toggle-switch.annual::after { transform: translateX(24px); }
+        .savings-badge { background: #10B981; color: white; padding: 2px 10px; border-radius: 12px; font-size: 0.8em; font-weight: bold; }
+
+        /* === FORM === */
+        .form-section { background: #1a1a2e; border-radius: 14px; padding: 28px; border: 1px solid #2a2a44; margin-bottom: 24px; }
+        .form-section h2 { font-size: 1.3em; color: #f1f5f9; margin-bottom: 20px; border: none; padding: 0; }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+        .form-group { display: flex; flex-direction: column; gap: 6px; }
+        .form-group.full { grid-column: 1 / -1; }
+        .form-group label { color: #94A3B8; font-size: 0.9em; font-weight: 500; }
+        .form-group input { background: #0d0d1a; border: 1px solid #2a2a44; border-radius: 8px; padding: 12px 14px; color: #f1f5f9; font-size: 1em; transition: border-color 0.2s; outline: none; }
+        .form-group input:focus { border-color: #3B82F6; }
+        .form-group input.error { border-color: #EF4444; }
+        .error-msg { color: #EF4444; font-size: 0.8em; min-height: 1.2em; }
+
+        /* === PAYMENT === */
+        .payment-placeholder { background: #0d0d1a; border: 2px dashed #2a2a44; border-radius: 10px; padding: 30px; text-align: center; margin-bottom: 16px; }
+        .payment-placeholder h3 { color: #64748B; font-size: 1em; margin-bottom: 8px; }
+        .payment-placeholder p { color: #475569; font-size: 0.85em; margin: 0; }
+        .payment-placeholder .icon { font-size: 2em; margin-bottom: 10px; opacity: 0.5; }
+        .payment-divider { text-align: center; color: #475569; margin: 16px 0; font-size: 0.9em; }
+        .api-note { background: #1e1b33; border: 1px solid #3B82F6; border-radius: 8px; padding: 12px 16px; margin-top: 16px; }
+        .api-note p { color: #94A3B8; font-size: 0.85em; margin: 0; }
+        .api-note strong { color: #3B82F6; }
+
+        /* === BUTTONS === */
+        .btn { display: block; width: 100%; text-align: center; padding: 16px; border-radius: 10px; text-decoration: none; font-weight: bold; font-size: 1.1em; transition: all 0.2s; cursor: pointer; border: none; }
+        .btn:hover { opacity: 0.85; transform: scale(1.01); }
+        .btn-primary { background: linear-gradient(135deg, #3B82F6, #8B5CF6); color: white; margin-bottom: 12px; opacity: 0.5; cursor: not-allowed; }
+        .btn-test { background: #1E293B; color: #F59E0B; border: 2px solid #F59E0B; margin-bottom: 12px; }
+        .btn-test:hover { background: #F59E0B; color: #0a0a14; }
+        .btn-back { background: transparent; color: #64748B; border: 1px solid #2a2a44; font-size: 0.95em; }
+
+        /* === LICENCE DISPLAY === */
+        .licence-result { display: none; background: #0f1f0f; border: 2px solid #166534; border-radius: 12px; padding: 24px; text-align: center; margin: 20px 0; animation: fadeIn 0.5s ease; }
+        .licence-result.show { display: block; }
+        .licence-key { font-family: 'Courier New', monospace; font-size: 1.4em; color: #4ade80; background: #0a0a14; padding: 14px 20px; border-radius: 8px; display: inline-block; margin: 12px 0; letter-spacing: 2px; cursor: pointer; user-select: all; border: 1px solid #166534; }
+        .licence-result p { color: #94A3B8; font-size: 0.9em; }
+        .licence-result .title { color: #4ade80; font-size: 1.1em; font-weight: bold; margin-bottom: 8px; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* === FOOTER === */
+        footer { text-align: center; color: #475569; padding: 40px 20px; border-top: 1px solid #1E293B; margin-top: 60px; font-size: 0.9em; }
+        footer a { color: #3B82F6; text-decoration: none; }
+        footer a:hover { text-decoration: underline; }
+
+        /* === RESPONSIVE === */
+        @media (max-width: 768px) {
+            .navbar { padding: 0 16px; flex-direction: column; height: auto; padding: 12px 16px; gap: 10px; }
+            .navbar-links { gap: 16px; flex-wrap: wrap; justify-content: center; }
+            .form-row { grid-template-columns: 1fr; }
+            .security-banner { flex-direction: column; gap: 8px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- NAVBAR -->
+    <nav class="navbar">
+        <a href="index.html" class="navbar-brand"><span>BeatMate V11</span></a>
+        <ul class="navbar-links">
+            <li><a href="index.html">Accueil</a></li>
+            <li><a href="features.html">Fonctionnalites</a></li>
+            <li><a href="pricing.html">Tarifs</a></li>
+            <li><a href="download.html">Telecharger</a></li>
+        </ul>
+    </nav>
+
+    <div class="container">
+
+        <!-- HEADER -->
+        <div class="page-header">
+            <h1>Paiement Securise</h1>
+            <p>Finalisez votre abonnement BeatMate V11</p>
+        </div>
+
+        <!-- SECURITY BANNER -->
+        <div class="security-banner">
+            <span><span class="lock-icon">&#128274;</span> Paiement securise SSL 256-bit</span>
+            <span><span class="lock-icon">&#128737;</span> Donnees chiffrees</span>
+            <span><span class="lock-icon">&#9989;</span> Conforme RGPD</span>
+        </div>
+
+        <!-- ORDER SUMMARY -->
+        <div class="order-summary">
+            <h2>Recapitulatif de commande</h2>
+            <div class="order-detail">
+                <span class="label">Forfait</span>
+                <span class="value" id="plan-name">--</span>
+            </div>
+            <div class="billing-toggle">
+                <label id="label-monthly" class="active">Mensuel</label>
+                <div class="toggle-switch" id="billing-toggle" onclick="toggleBilling()"></div>
+                <label id="label-annual">Annuel</label>
+                <span class="savings-badge" id="savings-badge" style="display:none">Economie !</span>
+            </div>
+            <div class="order-detail">
+                <span class="label">Prix</span>
+                <span class="value price" id="plan-price">--</span>
+            </div>
+        </div>
+
+        <!-- USER FORM -->
+        <div class="form-section">
+            <h2>Informations personnelles</h2>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="lastname">Nom *</label>
+                    <input type="text" id="lastname" placeholder="Dupont" required>
+                    <span class="error-msg" id="error-lastname"></span>
+                </div>
+                <div class="form-group">
+                    <label for="firstname">Prenom *</label>
+                    <input type="text" id="firstname" placeholder="Jean" required>
+                    <span class="error-msg" id="error-firstname"></span>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group full">
+                    <label for="email">Adresse email *</label>
+                    <input type="email" id="email" placeholder="jean.dupont@email.com" required>
+                    <span class="error-msg" id="error-email"></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- PAYMENT SECTION -->
+        <div class="form-section">
+            <h2>Mode de paiement</h2>
+
+            <!-- Stripe Placeholder -->
+            <div class="payment-placeholder">
+                <div class="icon">&#128179;</div>
+                <h3>Carte bancaire - Stripe</h3>
+                <div id="stripe-card-element">
+                    <p>Configuration Stripe en cours - Contactez-nous pour activer</p>
+                </div>
+            </div>
+
+            <div class="payment-divider">-- ou --</div>
+
+            <!-- PayPal Placeholder -->
+            <div class="payment-placeholder">
+                <div class="icon">&#127760;</div>
+                <h3>PayPal</h3>
+                <div id="paypal-button-container">
+                    <p>Configuration PayPal en cours</p>
+                </div>
+            </div>
+
+            <div class="api-note">
+                <p><strong>&#9432; Note :</strong> Les cles API Stripe/PayPal seront configurees prochainement. Utilisez le bouton de test ci-dessous pour generer une licence de demonstration.</p>
+            </div>
+        </div>
+
+        <!-- ACTION BUTTONS -->
+        <button class="btn btn-primary" disabled>Payer maintenant</button>
+        <button class="btn btn-test" onclick="generateTestLicence()">Mode Test - Generer une licence de demonstration</button>
+        <a href="pricing.html" class="btn btn-back">&#8592; Retour aux tarifs</a>
+
+        <!-- LICENCE RESULT -->
+        <div class="licence-result" id="licence-result">
+            <div class="title">&#10003; Licence de demonstration generee !</div>
+            <p>Cliquez sur la cle pour la copier :</p>
+            <div class="licence-key" id="licence-key" onclick="copyLicence()">--</div>
+            <p id="copy-feedback"></p>
+            <p style="margin-top:12px; color:#F59E0B; font-size:0.85em;">&#9888; Ceci est une cle de test. Elle sera remplacee par une vraie cle lors de l'activation du paiement.</p>
+            <a href="#" id="success-link" class="btn btn-test" style="margin-top:16px; display:inline-block; width:auto; padding:12px 24px;">Voir la page de confirmation &rarr;</a>
+        </div>
+
+    </div>
+
+    <!-- FOOTER -->
+    <footer>
+        <p>&copy; 2026 BeatMate V11 Professional. Tous droits reserves.</p>
+        <p style="margin-top: 8px;">
+            <a href="index.html">Accueil</a> &middot;
+            <a href="features.html">Fonctionnalites</a> &middot;
+            <a href="pricing.html">Tarifs</a> &middot;
+            <a href="download.html">Telecharger</a>
+        </p>
+    </footer>
+
+    <script>
+        // === PLAN DATA ===
+        const plans = {
+            personal: {
+                name: 'Personal',
+                monthly: 9.99,
+                annual: 89.99,
+                colorClass: 'price'
+            },
+            professional: {
+                name: 'Professional',
+                monthly: 19.99,
+                annual: 179.99,
+                colorClass: 'price'
+            },
+            premium: {
+                name: 'Premium',
+                monthly: 29.99,
+                annual: 269.99,
+                colorClass: 'premium-price'
+            }
+        };
+
+        let isAnnual = false;
+        let currentPlan = null;
+
+        // === INIT ===
+        function init() {
+            const params = new URLSearchParams(window.location.search);
+            const planKey = params.get('plan');
+
+            if (planKey && plans[planKey]) {
+                currentPlan = plans[planKey];
+                currentPlan.key = planKey;
+            } else {
+                currentPlan = plans.professional;
+                currentPlan.key = 'professional';
+            }
+
+            updateDisplay();
+        }
+
+        function updateDisplay() {
+            document.getElementById('plan-name').textContent = 'BeatMate V11 ' + currentPlan.name;
+
+            const priceEl = document.getElementById('plan-price');
+            if (isAnnual) {
+                priceEl.textContent = currentPlan.annual.toFixed(2) + '\u20AC / an';
+            } else {
+                priceEl.textContent = currentPlan.monthly.toFixed(2) + '\u20AC / mois';
+            }
+
+            priceEl.className = 'value ' + currentPlan.colorClass;
+        }
+
+        // === BILLING TOGGLE ===
+        function toggleBilling() {
+            isAnnual = !isAnnual;
+            const toggle = document.getElementById('billing-toggle');
+            const labelM = document.getElementById('label-monthly');
+            const labelA = document.getElementById('label-annual');
+            const badge = document.getElementById('savings-badge');
+
+            if (isAnnual) {
+                toggle.classList.add('annual');
+                labelM.classList.remove('active');
+                labelA.classList.add('active');
+                badge.style.display = 'inline';
+            } else {
+                toggle.classList.remove('annual');
+                labelM.classList.add('active');
+                labelA.classList.remove('active');
+                badge.style.display = 'none';
+            }
+
+            updateDisplay();
+        }
+
+        // === FORM VALIDATION ===
+        function validateForm() {
+            let valid = true;
+            const lastname = document.getElementById('lastname');
+            const firstname = document.getElementById('firstname');
+            const email = document.getElementById('email');
+
+            // Reset
+            [lastname, firstname, email].forEach(el => el.classList.remove('error'));
+            document.querySelectorAll('.error-msg').forEach(el => el.textContent = '');
+
+            if (!lastname.value.trim()) {
+                lastname.classList.add('error');
+                document.getElementById('error-lastname').textContent = 'Le nom est requis';
+                valid = false;
+            }
+            if (!firstname.value.trim()) {
+                firstname.classList.add('error');
+                document.getElementById('error-firstname').textContent = 'Le prenom est requis';
+                valid = false;
+            }
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!email.value.trim() || !emailRegex.test(email.value.trim())) {
+                email.classList.add('error');
+                document.getElementById('error-email').textContent = 'Adresse email invalide';
+                valid = false;
+            }
+
+            return valid;
+        }
+
+        // === GENERATE TEST LICENCE ===
+        function generateTestLicence() {
+            if (!validateForm()) return;
+
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+            let key = '';
+            for (let i = 0; i < 4; i++) {
+                if (i > 0) key += '-';
+                for (let j = 0; j < 5; j++) {
+                    key += chars.charAt(Math.floor(Math.random() * chars.length));
+                }
+            }
+
+            const resultEl = document.getElementById('licence-result');
+            document.getElementById('licence-key').textContent = key;
+            resultEl.classList.add('show');
+
+            // Update success link
+            document.getElementById('success-link').href = 'success.html?key=' + encodeURIComponent(key);
+
+            resultEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+
+        // === COPY LICENCE ===
+        function copyLicence() {
+            const key = document.getElementById('licence-key').textContent;
+            navigator.clipboard.writeText(key).then(() => {
+                document.getElementById('copy-feedback').textContent = 'Cle copiee dans le presse-papiers !';
+                document.getElementById('copy-feedback').style.color = '#4ade80';
+                setTimeout(() => {
+                    document.getElementById('copy-feedback').textContent = '';
+                }, 3000);
+            }).catch(() => {
+                // Fallback
+                const range = document.createRange();
+                range.selectNode(document.getElementById('licence-key'));
+                window.getSelection().removeAllRanges();
+                window.getSelection().addRange(range);
+                document.execCommand('copy');
+                document.getElementById('copy-feedback').textContent = 'Cle copiee !';
+                document.getElementById('copy-feedback').style.color = '#4ade80';
+            });
+        }
+
+        // Init on load
+        init();
+    </script>
+
+</body>
+</html>
