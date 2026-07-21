@@ -456,6 +456,7 @@ if(CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
         RUNTIME DESTINATION bin
         LIBRARY DESTINATION lib
         ARCHIVE DESTINATION lib
+        BUNDLE DESTINATION .
     )
     install(DIRECTORY resources/ DESTINATION share/beatmate/resources)
 
@@ -476,5 +477,7 @@ if(CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
     endif()
     install(TARGETS LicenseManager RUNTIME DESTINATION bin)
 
-    include(cmake/Packaging.cmake)
+    if(WIN32)
+        include(cmake/Packaging.cmake)
+    endif()
 endif()
