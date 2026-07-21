@@ -5,8 +5,8 @@ DerivedData/
 .DS_Store
 .ccache/
 
-models/
-third_party/onnxruntime/lib/
+/models/
+/third_party/onnxruntime/lib/
 
 *.o
 *.obj
