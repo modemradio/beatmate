@@ -39,6 +39,27 @@ jobs:
           fi
           ls -la "$LIBDIR"
 
+      - name: Cache modeles IA
+        uses: actions/cache@v4
+        with:
+          path: models
+          key: models-486439773
+
+      - name: Modeles IA (CLAP/BPM)
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -e
+          if [ ! -f models/clap/audio_model.onnx ]; then
+            echo "Telechargement des modeles IA (release assets-v1)..."
+            curl -sL -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/octet-stream" \
+              "https://api.github.com/repos/${{ github.repository }}/releases/assets/486439773" -o models.zip
+            unzip -q -o models.zip
+            rm -f models.zip
+          fi
+          echo "== models/ =="
+          find models -maxdepth 2 -type f -exec ls -la {} \; 2>/dev/null || echo "ATTENTION: models/ absent"
+
       - name: Build
         env:
           EXTRA_CMAKE_ARGS: "-DCMAKE_C_COMPILER_LAUNCHER=ccache -DCMAKE_CXX_COMPILER_LAUNCHER=ccache -DCMAKE_XCODE_ATTRIBUTE_CODE_SIGNING_ALLOWED=NO -DCMAKE_XCODE_ATTRIBUTE_CODE_SIGNING_REQUIRED=NO -DCMAKE_XCODE_ATTRIBUTE_CODE_SIGN_IDENTITY="
