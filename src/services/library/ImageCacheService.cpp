@@ -226,7 +226,8 @@ int ImageCacheService::cleanupOld(int maxAgeDays) {
 
             for (const auto& entry : fs::directory_iterator(path)) {
                 auto ftime = fs::last_write_time(entry.path());
-                auto sctp = std::chrono::clock_cast<std::chrono::system_clock>(ftime);
+                auto sctp = std::chrono::time_point_cast<std::chrono::system_clock::duration>(
+                    ftime - decltype(ftime)::clock::now() + std::chrono::system_clock::now());
                 auto age = std::chrono::duration_cast<std::chrono::hours>(now - sctp).count() / 24;
 
                 if (age > maxAgeDays) {

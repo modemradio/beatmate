@@ -106,17 +106,11 @@ std::optional<PeakData> PeakFileService::generatePeaks(const std::string& audioF
 int64_t PeakFileService::getFileMtimeMillis(const std::string& audioFilePath) {
     try {
         auto ftime = fs::last_write_time(audioFilePath);
-#if defined(__cpp_lib_chrono) && __cpp_lib_chrono >= 201907L
         auto sctp = std::chrono::time_point_cast<std::chrono::milliseconds>(
-            std::chrono::clock_cast<std::chrono::system_clock>(ftime));
+            std::chrono::time_point_cast<std::chrono::system_clock::duration>(
+                ftime - decltype(ftime)::clock::now() + std::chrono::system_clock::now()));
         const int64_t v = sctp.time_since_epoch().count();
         if (v > 0) return v;
-#else
-        auto sctp = std::chrono::time_point_cast<std::chrono::milliseconds>(
-            std::chrono::file_clock::to_sys(ftime));
-        const int64_t v = sctp.time_since_epoch().count();
-        if (v > 0) return v;
-#endif
     } catch (const std::exception& e) {
         spdlog::debug("PeakFileService: clock_cast failed ({}), falling back to JUCE mtime", e.what());
     } catch (...) {

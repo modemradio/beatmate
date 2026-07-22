@@ -175,7 +175,8 @@ int64_t UniversalMusicScanner::getFileModTime(const std::string& filePath) {
     try {
         auto ftime = fs::last_write_time(filePath);
         auto sctp = std::chrono::time_point_cast<std::chrono::seconds>(
-            std::chrono::clock_cast<std::chrono::system_clock>(ftime));
+            std::chrono::time_point_cast<std::chrono::system_clock::duration>(
+                ftime - decltype(ftime)::clock::now() + std::chrono::system_clock::now()));
         return sctp.time_since_epoch().count();
     } catch (...) {
         return 0;

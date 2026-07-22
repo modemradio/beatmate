@@ -150,7 +150,8 @@ RelocationResult MissingFileManager::relocateFile(int64_t trackId, const std::st
         track.fileSize = static_cast<int64_t>(fs::file_size(newPath));
         auto ftime = fs::last_write_time(newPath);
         auto sctp = std::chrono::time_point_cast<std::chrono::seconds>(
-            std::chrono::clock_cast<std::chrono::system_clock>(ftime));
+            std::chrono::time_point_cast<std::chrono::system_clock::duration>(
+                ftime - decltype(ftime)::clock::now() + std::chrono::system_clock::now()));
         track.lastModified = sctp.time_since_epoch().count();
     } catch (...) {}
 
