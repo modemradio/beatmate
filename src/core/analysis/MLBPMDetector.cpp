@@ -33,9 +33,14 @@ bool MLBPMDetector::loadModel(const std::string& modelPath) {
         sessionOptions.SetIntraOpNumThreads(4);
         sessionOptions.SetGraphOptimizationLevel(GraphOptimizationLevel::ORT_ENABLE_ALL);
 
+#ifdef _WIN32
         std::wstring wModelPath(modelPath.begin(), modelPath.end());
         session_->session = std::make_unique<Ort::Session>(
             session_->env, wModelPath.c_str(), sessionOptions);
+#else
+        session_->session = std::make_unique<Ort::Session>(
+            session_->env, modelPath.c_str(), sessionOptions);
+#endif
         modelLoaded_ = true;
         modelPath_ = modelPath;
         spdlog::info("MLBPMDetector: loaded model from {}", modelPath);
