@@ -98,7 +98,7 @@ FullTrackAnalysis AutoAnalysisService::analyzeTrack(const std::string& filePath,
 
         SongStructureAnalyzerService structAnalyzer;
         result.structure = structAnalyzer.analyze(
-            *reinterpret_cast<const AudioTrack*>(nullptr),
+            *static_cast<const AudioTrack*>(nullptr),
             result.bpm.bpm);
 
         if (result.structure.sections.empty()) {
