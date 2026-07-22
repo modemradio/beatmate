@@ -9,6 +9,8 @@
 #include <spdlog/sinks/stdout_color_sinks.h>
 #include <spdlog/sinks/rotating_file_sink.h>
 #include <atomic>
+#include <cstdlib>
+#include <string>
 
 // Windows minidump-on-crash handler (diagnostic crash 139).
 #if JUCE_WINDOWS
@@ -160,6 +162,17 @@ public:
     void initialise(const juce::String& commandLine) override
     {
         juce::ignoreUnused(commandLine);
+
+#ifdef __APPLE__
+        {
+            auto appDir = juce::File::getSpecialLocation(juce::File::currentApplicationFile)
+                              .getParentDirectory().getFullPathName().toStdString();
+            const char* cur = std::getenv("PATH");
+            std::string np = appDir + ":/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin";
+            if (cur && *cur) np += std::string(":") + cur;
+            setenv("PATH", np.c_str(), 1);
+        }
+#endif
 
         setupLogging();
 

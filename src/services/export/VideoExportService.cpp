@@ -32,9 +32,17 @@ std::string VideoExportService::findFfmpeg() {
     auto exeDir = juce::File::getSpecialLocation(juce::File::currentApplicationFile)
                       .getParentDirectory();
     juce::Array<juce::File> candidates;
+#ifdef _WIN32
     candidates.add(exeDir.getChildFile("ffmpeg.exe"));
     candidates.add(exeDir.getChildFile("tools").getChildFile("ffmpeg.exe"));
     candidates.add(exeDir.getChildFile("tools").getChildFile("external").getChildFile("ffmpeg.exe"));
+#else
+    candidates.add(exeDir.getChildFile("ffmpeg"));
+    candidates.add(exeDir.getChildFile("tools").getChildFile("ffmpeg"));
+    candidates.add(juce::File("/opt/homebrew/bin/ffmpeg"));
+    candidates.add(juce::File("/usr/local/bin/ffmpeg"));
+    candidates.add(juce::File("/usr/bin/ffmpeg"));
+#endif
     for (const auto& c : candidates)
         if (c.existsAsFile()) return c.getFullPathName().toStdString();
 
@@ -48,6 +56,13 @@ std::string VideoExportService::findFfmpeg() {
                            .trim();
             return path.toStdString();
         }
+    }
+#else
+    juce::ChildProcess cp;
+    if (cp.start("which ffmpeg")) {
+        auto out = cp.readAllProcessOutput().trim();
+        if (out.isNotEmpty())
+            return out.upToFirstOccurrenceOf("\n", false, false).trim().toStdString();
     }
 #endif
     return {};
