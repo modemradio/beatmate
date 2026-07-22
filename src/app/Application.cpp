@@ -181,12 +181,16 @@ struct Application::WpLicenseBundle
 // Global ServiceLocator pointer(s) for UI access.
 BeatMate::ServiceLocator* g_serviceLocator = nullptr;
 namespace BeatMate { ServiceLocator* g_serviceLocator = nullptr; }
+namespace BeatMate { namespace UI { ServiceLocator* g_serviceLocator = nullptr;
+    namespace Widgets { ServiceLocator* g_serviceLocator = nullptr; } } }
 
 static void bindServiceLocator(BeatMate::ServiceLocator* sl)
 {
     // Keep both symbols pointing at the same instance.
     ::g_serviceLocator         = sl;
     BeatMate::g_serviceLocator = sl;
+    BeatMate::UI::g_serviceLocator = sl;
+    BeatMate::UI::Widgets::g_serviceLocator = sl;
 }
 
 namespace BeatMate {
