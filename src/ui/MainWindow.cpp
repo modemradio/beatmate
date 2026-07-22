@@ -67,6 +67,8 @@
 #include <psapi.h>
 #endif
 
+namespace BeatMate { extern ServiceLocator* g_serviceLocator; }
+
 namespace BeatMate::UI {
 
 static juce::Colour moduleAccentFor(int navTarget)

@@ -15,6 +15,8 @@
 #include <cmath>
 #include <set>
 
+namespace BeatMate { extern ServiceLocator* g_serviceLocator; }
+
 namespace BeatMate::UI::Widgets {
 
 using Services::Suggestions::Suggestion;
