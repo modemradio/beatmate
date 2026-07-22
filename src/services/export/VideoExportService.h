@@ -12,11 +12,14 @@ namespace BeatMate::Services::Export {
 class VideoExportService {
 public:
     struct Options {
-        int width = 1920;
-        int height = 1080;
-        int fps = 30;
-        int videoBitrateKbps = 10000;
-        int audioBitrateKbps = 320;
+        int width;
+        int height;
+        int fps;
+        int videoBitrateKbps;
+        int audioBitrateKbps;
+        Options()
+            : width(1920), height(1080), fps(30),
+              videoBitrateKbps(10000), audioBitrateKbps(320) {}
     };
 
     using ProgressCallback = std::function<bool(float pct, const std::string& phase)>;
