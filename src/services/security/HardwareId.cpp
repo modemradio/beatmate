@@ -20,6 +20,8 @@
 #ifdef __APPLE__
 #include <CoreFoundation/CoreFoundation.h>
 #include <IOKit/IOKitLib.h>
+#include <sys/socket.h>
+#include <net/if.h>
 #include <ifaddrs.h>
 #include <net/if_dl.h>
 #include <cstdio>
