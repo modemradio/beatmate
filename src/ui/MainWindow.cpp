@@ -71,6 +71,8 @@ namespace BeatMate { extern ServiceLocator* g_serviceLocator; }
 
 namespace BeatMate::UI {
 
+using ::BeatMate::g_serviceLocator;
+
 static juce::Colour moduleAccentFor(int navTarget)
 {
     switch (navTarget)
