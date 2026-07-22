@@ -16,8 +16,13 @@ using BeatMate::Services::DJSoftware::PlayedTrack;
 namespace {
 
 static std::string masterDbPath() {
+#ifdef _WIN32
     auto appData = juce::File::getSpecialLocation(juce::File::windowsLocalAppData)
                        .getParentDirectory().getChildFile("Roaming");
+#else
+    auto appData = juce::File::getSpecialLocation(juce::File::userHomeDirectory)
+                       .getChildFile("Library");
+#endif
     juce::File base = appData.getChildFile("Pioneer");
     if (!base.isDirectory()) {
         base = juce::File::getSpecialLocation(juce::File::userApplicationDataDirectory)

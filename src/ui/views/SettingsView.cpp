@@ -1502,8 +1502,13 @@ juce::Component* SettingsView::createDJSoftwareTab()
     exportBtn->onClick = [exportBtn] {
         juce::Component::SafePointer<juce::TextButton> btnSafe(exportBtn);
         std::thread([btnSafe]() {
+#ifdef _WIN32
             auto appData = juce::File::getSpecialLocation(juce::File::windowsLocalAppData)
                                .getParentDirectory().getChildFile("Roaming");
+#else
+            auto appData = juce::File::getSpecialLocation(juce::File::userHomeDirectory)
+                               .getChildFile("Library");
+#endif
             juce::File src = appData.getChildFile("Pioneer")
                                     .getChildFile("rekordbox")
                                     .getChildFile("master.db");
