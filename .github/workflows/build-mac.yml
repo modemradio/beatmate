@@ -46,6 +46,16 @@ jobs:
           chmod +x build_mac.sh
           ./build_mac.sh
 
+      - name: Bundler ONNX Runtime dans l'app
+        if: success()
+        run: |
+          APP="build-mac/BeatMateV11_artefacts/Release/BeatMate V11.app"
+          MACOS="$APP/Contents/MacOS"
+          if [ -d "$APP" ]; then
+            cp -v third_party/onnxruntime/lib/libonnxruntime*.dylib "$MACOS/" || true
+            ls -la "$MACOS" | grep -i onnx || echo "ATTENTION: dylib ONNX absente"
+          fi
+
       - name: Signature ad-hoc
         if: success()
         run: |
