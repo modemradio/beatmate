@@ -1,0 +1,110 @@
+name: Build stems engine (macOS)
+
+on:
+  workflow_dispatch:
+
+jobs:
+  stems:
+    runs-on: macos-14
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Python + ffmpeg
+        run: |
+          brew install python@3.12 ffmpeg
+          /opt/homebrew/bin/python3.12 -m venv venv
+          source venv/bin/activate
+          python -m pip install --upgrade pip wheel
+
+      - name: audio-separator + pyinstaller
+        run: |
+          source venv/bin/activate
+          pip install "audio-separator[silicon]==0.44.2" pyinstaller
+
+      - name: Wrapper CLI
+        run: |
+          cat > stemsep_cli.py <<'PY'
+          import argparse, os
+          from audio_separator.separator import Separator
+
+          MODEL_MAP = {
+              "htdemucs_ft": "htdemucs_ft.yaml",
+              "vocft":       "UVR-MDX-NET-Voc_FT.onnx",
+          }
+
+          def main():
+              ap = argparse.ArgumentParser()
+              ap.add_argument("--input", required=True)
+              ap.add_argument("--out", required=True)
+              ap.add_argument("--model", required=True)
+              ap.add_argument("--device", default="auto")
+              a = ap.parse_args()
+              md = os.path.join(os.path.dirname(os.path.abspath(__file__)), "models")
+              sep = Separator(output_dir=a.out, model_file_dir=md)
+              sep.load_model(model_filename=MODEL_MAP.get(a.model, a.model))
+              sep.separate(a.input)
+
+          if __name__ == "__main__":
+              main()
+          PY
+          cat stemsep_cli.py
+
+      - name: Freeze (PyInstaller)
+        run: |
+          source venv/bin/activate
+          pyinstaller --onedir --name stemsep \
+            --collect-all audio_separator \
+            --collect-all onnxruntime \
+            --copy-metadata audio_separator \
+            stemsep_cli.py
+          ls -la dist/stemsep | head -20
+
+      - name: Telecharger les modeles
+        run: |
+          source venv/bin/activate
+          mkdir -p dist/stemsep/models
+          python - <<'PY'
+          from audio_separator.separator import Separator
+          s = Separator(model_file_dir="dist/stemsep/models")
+          for m in ("UVR-MDX-NET-Voc_FT.onnx", "htdemucs_ft.yaml"):
+              try:
+                  s.download_model_files(m)
+                  print("OK", m)
+              except Exception as e:
+                  print("ECHEC", m, e)
+          PY
+          du -sh dist/stemsep/models || true
+
+      - name: Empaqueter
+        run: |
+          cd dist && zip -r -q -y ../stemsep-macos.zip stemsep && cd ..
+          echo "taille : $(du -sh stemsep-macos.zip | cut -f1)"
+
+      - name: Upload vers la release assets-v1
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          REL_ID=358336226
+          # supprimer un ancien asset du meme nom
+          OLD=$(curl -s -H "Authorization: Bearer $GH_TOKEN" \
+            "https://api.github.com/repos/${{ github.repository }}/releases/$REL_ID/assets" \
+            | python3 -c "import sys,json;[print(a['id']) for a in json.load(sys.stdin) if a['name']=='stemsep-macos.zip']" 2>/dev/null || true)
+          for id in $OLD; do
+            curl -s -X DELETE -H "Authorization: Bearer $GH_TOKEN" \
+              "https://api.github.com/repos/${{ github.repository }}/releases/assets/$id" || true
+          done
+          curl -sL -X POST \
+            -H "Authorization: Bearer $GH_TOKEN" \
+            -H "Content-Type: application/zip" \
+            --data-binary @stemsep-macos.zip \
+            "https://uploads.github.com/repos/${{ github.repository }}/releases/$REL_ID/assets?name=stemsep-macos.zip" | python3 -c "import sys,json;d=json.load(sys.stdin);print('asset id:', d.get('id'), 'size:', d.get('size'))"
+
+      - name: Artifact de secours
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: stemsep-macos
+          path: stemsep-macos.zip
+          if-no-files-found: warn
+          retention-days: 7
