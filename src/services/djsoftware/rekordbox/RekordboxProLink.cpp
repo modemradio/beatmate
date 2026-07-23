@@ -12,6 +12,14 @@
   #include <winsock2.h>
   #include <ws2tcpip.h>
   #pragma comment(lib, "Ws2_32.lib")
+#elif defined(__APPLE__)
+  #include <sys/socket.h>
+  #include <sys/time.h>
+  #include <netinet/in.h>
+  #include <arpa/inet.h>
+  #include <unistd.h>
+  #include <fcntl.h>
+  #include <cerrno>
 #endif
 
 namespace BeatMate::Services::Rekordbox {
@@ -49,80 +57,6 @@ static uint32_t rdBE32(const uint8_t* p) {
 RekordboxProLink::RekordboxProLink() = default;
 
 RekordboxProLink::~RekordboxProLink() { stop(); }
-
-#ifdef _WIN32
-
-bool RekordboxProLink::start()
-{
-    if (running_.load()) return true;
-
-    WSADATA wsa{};
-    if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0) {
-        spdlog::warn("[RBLink] WSAStartup failed");
-        return false;
-    }
-
-    running_.store(true);
-    worker_ = std::thread([this] { threadLoop(); });
-    spdlog::info("[RBLink] listener started (UDP 50002 passive sniff)");
-    return true;
-}
-
-void RekordboxProLink::stop()
-{
-    if (!running_.exchange(false)) return;
-    if (worker_.joinable()) worker_.join();
-    WSACleanup();
-    spdlog::info("[RBLink] listener stopped");
-}
-
-void RekordboxProLink::threadLoop()
-{
-    SOCKET sock = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
-    if (sock == INVALID_SOCKET) {
-        spdlog::warn("[RBLink] socket() failed: {}", WSAGetLastError());
-        return;
-    }
-
-    BOOL reuse = TRUE;
-    setsockopt(sock, SOL_SOCKET, SO_REUSEADDR,
-               reinterpret_cast<const char*>(&reuse), sizeof(reuse));
-    BOOL bcast = TRUE;
-    setsockopt(sock, SOL_SOCKET, SO_BROADCAST,
-               reinterpret_cast<const char*>(&bcast), sizeof(bcast));
-
-    sockaddr_in addr{};
-    addr.sin_family      = AF_INET;
-    addr.sin_addr.s_addr = htonl(INADDR_ANY);
-    addr.sin_port        = htons(50002);
-
-    if (bind(sock, reinterpret_cast<sockaddr*>(&addr), sizeof(addr)) == SOCKET_ERROR) {
-        int err = WSAGetLastError();
-        spdlog::warn("[RBLink] bind UDP 50002 failed (err={}) - rekordbox likely "
-                     "holds the port exclusively. Disabling listener.", err);
-        closesocket(sock);
-        running_.store(false);
-        return;
-    }
-
-    DWORD rxTimeoutMs = 500;
-    setsockopt(sock, SOL_SOCKET, SO_RCVTIMEO,
-               reinterpret_cast<const char*>(&rxTimeoutMs), sizeof(rxTimeoutMs));
-
-    spdlog::info("[RBLink] bound UDP 50002, waiting for rekordbox LINK packets...");
-
-    uint8_t buf[2048];
-    while (running_.load()) {
-        sockaddr_in from{};
-        int fromLen = sizeof(from);
-        int n = recvfrom(sock, reinterpret_cast<char*>(buf), sizeof(buf), 0,
-                         reinterpret_cast<sockaddr*>(&from), &fromLen);
-        if (n <= 0) continue;
-        handlePacket(buf, static_cast<size_t>(n));
-    }
-
-    closesocket(sock);
-}
 
 void RekordboxProLink::handlePacket(const uint8_t* data, size_t len)
 {
@@ -203,15 +137,153 @@ uint32_t RekordboxProLink::currentMasterTrackId() const
     return decks_[p].rekordboxId;
 }
 
+#ifdef _WIN32
+
+bool RekordboxProLink::start()
+{
+    if (running_.load()) return true;
+
+    WSADATA wsa{};
+    if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0) {
+        spdlog::warn("[RBLink] WSAStartup failed");
+        return false;
+    }
+
+    running_.store(true);
+    worker_ = std::thread([this] { threadLoop(); });
+    spdlog::info("[RBLink] listener started (UDP 50002 passive sniff)");
+    return true;
+}
+
+void RekordboxProLink::stop()
+{
+    if (!running_.exchange(false)) return;
+    if (worker_.joinable()) worker_.join();
+    WSACleanup();
+    spdlog::info("[RBLink] listener stopped");
+}
+
+void RekordboxProLink::threadLoop()
+{
+    SOCKET sock = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
+    if (sock == INVALID_SOCKET) {
+        spdlog::warn("[RBLink] socket() failed: {}", WSAGetLastError());
+        return;
+    }
+
+    BOOL reuse = TRUE;
+    setsockopt(sock, SOL_SOCKET, SO_REUSEADDR,
+               reinterpret_cast<const char*>(&reuse), sizeof(reuse));
+    BOOL bcast = TRUE;
+    setsockopt(sock, SOL_SOCKET, SO_BROADCAST,
+               reinterpret_cast<const char*>(&bcast), sizeof(bcast));
+
+    sockaddr_in addr{};
+    addr.sin_family      = AF_INET;
+    addr.sin_addr.s_addr = htonl(INADDR_ANY);
+    addr.sin_port        = htons(50002);
+
+    if (bind(sock, reinterpret_cast<sockaddr*>(&addr), sizeof(addr)) == SOCKET_ERROR) {
+        int err = WSAGetLastError();
+        spdlog::warn("[RBLink] bind UDP 50002 failed (err={}) - rekordbox likely "
+                     "holds the port exclusively. Disabling listener.", err);
+        closesocket(sock);
+        running_.store(false);
+        return;
+    }
+
+    DWORD rxTimeoutMs = 500;
+    setsockopt(sock, SOL_SOCKET, SO_RCVTIMEO,
+               reinterpret_cast<const char*>(&rxTimeoutMs), sizeof(rxTimeoutMs));
+
+    spdlog::info("[RBLink] bound UDP 50002, waiting for rekordbox LINK packets...");
+
+    uint8_t buf[2048];
+    while (running_.load()) {
+        sockaddr_in from{};
+        int fromLen = sizeof(from);
+        int n = recvfrom(sock, reinterpret_cast<char*>(buf), sizeof(buf), 0,
+                         reinterpret_cast<sockaddr*>(&from), &fromLen);
+        if (n <= 0) continue;
+        handlePacket(buf, static_cast<size_t>(n));
+    }
+
+    closesocket(sock);
+}
+
+#elif defined(__APPLE__)
+
+bool RekordboxProLink::start()
+{
+    if (running_.load()) return true;
+
+    running_.store(true);
+    worker_ = std::thread([this] { threadLoop(); });
+    spdlog::info("[RBLink] listener started (UDP 50002 passive sniff)");
+    return true;
+}
+
+void RekordboxProLink::stop()
+{
+    if (!running_.exchange(false)) return;
+    if (worker_.joinable()) worker_.join();
+    spdlog::info("[RBLink] listener stopped");
+}
+
+void RekordboxProLink::threadLoop()
+{
+    int sock = socket(AF_INET, SOCK_DGRAM, 0);
+    if (sock < 0) {
+        spdlog::warn("[RBLink] socket() failed: {}", errno);
+        return;
+    }
+
+    int reuse = 1;
+    setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, &reuse, sizeof(reuse));
+#ifdef SO_REUSEPORT
+    setsockopt(sock, SOL_SOCKET, SO_REUSEPORT, &reuse, sizeof(reuse));
+#endif
+    int bcast = 1;
+    setsockopt(sock, SOL_SOCKET, SO_BROADCAST, &bcast, sizeof(bcast));
+
+    sockaddr_in addr{};
+    addr.sin_family      = AF_INET;
+    addr.sin_addr.s_addr = htonl(INADDR_ANY);
+    addr.sin_port        = htons(50002);
+
+    if (bind(sock, reinterpret_cast<sockaddr*>(&addr), sizeof(addr)) < 0) {
+        spdlog::warn("[RBLink] bind UDP 50002 failed (errno={}) - rekordbox likely "
+                     "holds the port exclusively. Disabling listener.", errno);
+        close(sock);
+        running_.store(false);
+        return;
+    }
+
+    struct timeval rxTimeout{};
+    rxTimeout.tv_sec  = 0;
+    rxTimeout.tv_usec = 500000;
+    setsockopt(sock, SOL_SOCKET, SO_RCVTIMEO, &rxTimeout, sizeof(rxTimeout));
+
+    spdlog::info("[RBLink] bound UDP 50002, waiting for rekordbox LINK packets...");
+
+    uint8_t buf[2048];
+    while (running_.load()) {
+        sockaddr_in from{};
+        socklen_t fromLen = sizeof(from);
+        ssize_t n = recvfrom(sock, buf, sizeof(buf), 0,
+                             reinterpret_cast<sockaddr*>(&from), &fromLen);
+        if (n <= 0) continue;
+        handlePacket(buf, static_cast<size_t>(n));
+    }
+
+    close(sock);
+}
+
 #else
 
 bool RekordboxProLink::start() { return false; }
 void RekordboxProLink::stop() {}
 void RekordboxProLink::threadLoop() {}
-void RekordboxProLink::handlePacket(const uint8_t*, size_t) {}
-std::optional<PlayedTrack> RekordboxProLink::readNowPlaying() { return std::nullopt; }
-bool RekordboxProLink::isReceiving() const { return false; }
-uint32_t RekordboxProLink::currentMasterTrackId() const { return 0; }
 
 #endif
 

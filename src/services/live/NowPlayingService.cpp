@@ -33,6 +33,18 @@ std::set<std::wstring> runningProcessSet()
         } while (Process32NextW(snap, &pe));
     }
     CloseHandle(snap);
+#elif defined(__APPLE__)
+    juce::ChildProcess cp;
+    if (cp.start("/bin/ps -axo comm="))
+    {
+        const auto outStr = cp.readAllProcessOutput();
+        for (const auto& line : juce::StringArray::fromLines(outStr))
+        {
+            auto s = line.trim().fromLastOccurrenceOf("/", false, false).toLowerCase();
+            if (s.isNotEmpty())
+                out.insert(std::wstring(s.toWideCharPointer()));
+        }
+    }
 #endif
     return out;
 }
@@ -41,6 +53,14 @@ bool anyProcess(const std::set<std::wstring>& procs, std::initializer_list<const
 {
     for (const auto* n : names)
         if (procs.count(n) > 0) return true;
+    return false;
+}
+
+bool anyProcessContains(const std::set<std::wstring>& procs, std::initializer_list<const wchar_t*> subs)
+{
+    for (const auto& p : procs)
+        for (const auto* s : subs)
+            if (p.find(s) != std::wstring::npos) return true;
     return false;
 }
 
@@ -146,11 +166,19 @@ void NowPlayingService::pollOnce()
         lastProcScanMs_ = nowScanMs;
     }
     const auto& procs = cachedProcs_;
+#if defined(__APPLE__)
+    const bool vdjUp = anyProcessContains(procs, { L"virtualdj" });
+    const bool seratoUp = anyProcessContains(procs, { L"serato" });
+    const bool rekordboxUp = anyProcessContains(procs, { L"rekordbox" });
+    const bool engineUp = anyProcessContains(procs, { L"engine dj", L"enginedj" });
+    const bool traktorUp = anyProcessContains(procs, { L"traktor" });
+#else
     const bool vdjUp = anyProcess(procs, { L"virtualdj.exe", L"virtualdj_pro.exe", L"virtualdj pro.exe", L"virtualdj8.exe" });
     const bool seratoUp = anyProcess(procs, { L"serato dj pro.exe", L"serato dj lite.exe", L"seratodj.exe", L"serato_dj.exe", L"serato dj.exe" });
     const bool rekordboxUp = anyProcess(procs, { L"rekordbox.exe" });
     const bool engineUp = anyProcess(procs, { L"engine dj.exe", L"enginedj.exe" });
     const bool traktorUp = anyProcess(procs, { L"traktor.exe" });
+#endif
 
     std::vector<std::string> running;
     if (vdjUp) running.push_back("VirtualDJ");

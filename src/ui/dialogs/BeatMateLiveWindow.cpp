@@ -774,6 +774,18 @@ bool BeatMateLiveWindow::detectDJForeground()
     constexpr size_t nTitle = sizeof(kDJTitleSubstrings) / sizeof(kDJTitleSubstrings[0]);
     return matchesAny(exeLower, kDJProcessNames, nProc)
         || matchesAny(titleLower, kDJTitleSubstrings, nTitle);
+   #elif defined(__APPLE__)
+    juce::ChildProcess cp;
+    juce::StringArray args { "/usr/bin/osascript", "-e",
+        "tell application \"System Events\" to get name of first application process whose frontmost is true" };
+    if (! cp.start(args))
+        return false;
+    const auto front = cp.readAllProcessOutput().trim().toLowerCase();
+    if (front.isEmpty() || front.contains("beatmate"))
+        return false;
+    const std::string frontStd = front.toStdString();
+    constexpr size_t nTitle = sizeof(kDJTitleSubstrings) / sizeof(kDJTitleSubstrings[0]);
+    return matchesAny(frontStd, kDJTitleSubstrings, nTitle);
    #else
     return false;
    #endif

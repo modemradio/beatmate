@@ -31,6 +31,9 @@ const juce::KnownPluginList& VSTPluginHost::scan(bool force) {
     searchPath.add(juce::File("/Library/Audio/Plug-Ins/VST3"));
     searchPath.add(juce::File::getSpecialLocation(juce::File::userHomeDirectory)
                        .getChildFile("Library/Audio/Plug-Ins/VST3"));
+    searchPath.add(juce::File("/Library/Audio/Plug-Ins/Components"));
+    searchPath.add(juce::File::getSpecialLocation(juce::File::userHomeDirectory)
+                       .getChildFile("Library/Audio/Plug-Ins/Components"));
 #endif
 
     for (int i = 0; i < formatManager_.getNumFormats(); ++i) {

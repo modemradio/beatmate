@@ -65,6 +65,11 @@
 #ifdef _WIN32
 #include <windows.h>
 #include <psapi.h>
+#elif defined(__APPLE__)
+#include <mach/mach.h>
+#include <mach/mach_host.h>
+#include <sys/sysctl.h>
+#include <sys/statvfs.h>
 #endif
 
 namespace BeatMate::UI {
@@ -399,6 +404,55 @@ void MainWindow::timerCallback()
         {
             diskTotalGB = totalBytes.QuadPart / (1024.0f * 1024.0f * 1024.0f);
             diskUsedGB = (totalBytes.QuadPart - freeBytes.QuadPart) / (1024.0f * 1024.0f * 1024.0f);
+        }
+#elif defined(__APPLE__)
+        static uint64_t prevBusy = 0, prevIdle = 0;
+        host_cpu_load_info_data_t cpuLoad;
+        mach_msg_type_number_t cpuCount = HOST_CPU_LOAD_INFO_COUNT;
+        if (host_statistics(mach_host_self(), HOST_CPU_LOAD_INFO,
+                            reinterpret_cast<host_info_t>(&cpuLoad), &cpuCount) == KERN_SUCCESS)
+        {
+            const uint64_t busy = (uint64_t) cpuLoad.cpu_ticks[CPU_STATE_USER]
+                                + cpuLoad.cpu_ticks[CPU_STATE_SYSTEM]
+                                + cpuLoad.cpu_ticks[CPU_STATE_NICE];
+            const uint64_t idle = cpuLoad.cpu_ticks[CPU_STATE_IDLE];
+            const uint64_t dBusy = busy - prevBusy;
+            const uint64_t dIdle = idle - prevIdle;
+            const uint64_t total = dBusy + dIdle;
+            if (total > 0 && prevBusy != 0)
+                cpuPercent = (double) dBusy * 100.0 / (double) total;
+            prevBusy = busy;
+            prevIdle = idle;
+        }
+
+        uint64_t memSize = 0;
+        size_t memLen = sizeof(memSize);
+        if (sysctlbyname("hw.memsize", &memSize, &memLen, nullptr, 0) == 0 && memSize > 0)
+        {
+            ramTotalGB = (float) ((double) memSize / (1024.0 * 1024.0 * 1024.0));
+            vm_statistics64_data_t vmStat;
+            mach_msg_type_number_t vmCount = HOST_VM_INFO64_COUNT;
+            vm_size_t pageSize = 0;
+            host_page_size(mach_host_self(), &pageSize);
+            if (host_statistics64(mach_host_self(), HOST_VM_INFO64,
+                                  reinterpret_cast<host_info64_t>(&vmStat), &vmCount) == KERN_SUCCESS)
+            {
+                const uint64_t usedBytes = ((uint64_t) vmStat.active_count
+                                          + vmStat.wire_count
+                                          + vmStat.compressor_page_count)
+                                          * (uint64_t) pageSize;
+                ramUsedGB = (float) ((double) usedBytes / (1024.0 * 1024.0 * 1024.0));
+            }
+        }
+
+        struct statvfs vfs;
+        if (statvfs("/", &vfs) == 0)
+        {
+            const double blockSize  = (double) vfs.f_frsize;
+            const double totalBytes = (double) vfs.f_blocks * blockSize;
+            const double freeBytes  = (double) vfs.f_bavail * blockSize;
+            diskTotalGB = (float) (totalBytes / (1024.0 * 1024.0 * 1024.0));
+            diskUsedGB  = (float) ((totalBytes - freeBytes) / (1024.0 * 1024.0 * 1024.0));
         }
 #else
         ramTotalGB = juce::SystemStats::getMemorySizeInMegabytes() / 1024.0f;

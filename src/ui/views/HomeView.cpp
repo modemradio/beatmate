@@ -15,6 +15,11 @@
 #include <windows.h>
 #include <psapi.h>
 #pragma comment(lib, "psapi.lib")
+#elif defined(__APPLE__)
+#include <mach/mach.h>
+#include <mach/mach_host.h>
+#include <sys/sysctl.h>
+#include <sys/statvfs.h>
 #endif
 
 namespace BeatMate { extern ServiceLocator* g_serviceLocator; }
@@ -586,6 +591,58 @@ void HomeView::timerCallback()
         const double free  = static_cast<double>(freeBytes.QuadPart);
         m_performanceCard->diskTotalGB = static_cast<float>(total / kBytesPerGB);
         m_performanceCard->diskUsedGB  = static_cast<float>((total - free) / kBytesPerGB);
+    }
+#elif defined(__APPLE__)
+    static uint64_t s_prevBusy = 0, s_prevIdle = 0;
+    host_cpu_load_info_data_t cpuLoad;
+    mach_msg_type_number_t cpuCount = HOST_CPU_LOAD_INFO_COUNT;
+    if (host_statistics(mach_host_self(), HOST_CPU_LOAD_INFO,
+                        reinterpret_cast<host_info_t>(&cpuLoad), &cpuCount) == KERN_SUCCESS)
+    {
+        const uint64_t busy = (uint64_t) cpuLoad.cpu_ticks[CPU_STATE_USER]
+                            + cpuLoad.cpu_ticks[CPU_STATE_SYSTEM]
+                            + cpuLoad.cpu_ticks[CPU_STATE_NICE];
+        const uint64_t idle = cpuLoad.cpu_ticks[CPU_STATE_IDLE];
+        const uint64_t dBusy = busy - s_prevBusy;
+        const uint64_t dIdle = idle - s_prevIdle;
+        const uint64_t total = dBusy + dIdle;
+        if (total > 0 && s_prevBusy != 0)
+            m_performanceCard->cpuPercent = juce::jlimit(0.0f, 100.0f,
+                static_cast<float>((double) dBusy * 100.0 / (double) total));
+        s_prevBusy = busy;
+        s_prevIdle = idle;
+    }
+
+    uint64_t memSize = 0;
+    size_t memLen = sizeof(memSize);
+    if (sysctlbyname("hw.memsize", &memSize, &memLen, nullptr, 0) == 0 && memSize > 0)
+    {
+        constexpr double kBytesPerMB = 1024.0 * 1024.0;
+        m_performanceCard->ramTotalMB = static_cast<float>((double) memSize / kBytesPerMB);
+        vm_statistics64_data_t vmStat;
+        mach_msg_type_number_t vmCount = HOST_VM_INFO64_COUNT;
+        vm_size_t pageSize = 0;
+        host_page_size(mach_host_self(), &pageSize);
+        if (host_statistics64(mach_host_self(), HOST_VM_INFO64,
+                              reinterpret_cast<host_info64_t>(&vmStat), &vmCount) == KERN_SUCCESS)
+        {
+            const uint64_t usedBytes = ((uint64_t) vmStat.active_count
+                                      + vmStat.wire_count
+                                      + vmStat.compressor_page_count)
+                                      * (uint64_t) pageSize;
+            m_performanceCard->ramMB = static_cast<float>((double) usedBytes / kBytesPerMB);
+        }
+    }
+
+    struct statvfs vfs;
+    if (statvfs("/", &vfs) == 0)
+    {
+        constexpr double kBytesPerGB = 1024.0 * 1024.0 * 1024.0;
+        const double blockSize  = static_cast<double>(vfs.f_frsize);
+        const double totalBytes = static_cast<double>(vfs.f_blocks) * blockSize;
+        const double freeBytes  = static_cast<double>(vfs.f_bavail) * blockSize;
+        m_performanceCard->diskTotalGB = static_cast<float>(totalBytes / kBytesPerGB);
+        m_performanceCard->diskUsedGB  = static_cast<float>((totalBytes - freeBytes) / kBytesPerGB);
     }
 #else
     m_performanceCard->cpuPercent  = 0.0f;

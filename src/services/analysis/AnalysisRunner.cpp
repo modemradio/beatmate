@@ -13,6 +13,9 @@
 #include <spdlog/spdlog.h>
 #if defined(_WIN32)
 #include <windows.h>
+#elif defined(__APPLE__)
+#include <pthread.h>
+#include <sched.h>
 #endif
 
 namespace BeatMate { extern ServiceLocator* g_serviceLocator; }
@@ -297,11 +300,28 @@ void AnalysisRunner::runUltraStems(const Models::Track& track)
     spdlog::info("[AnalysisRunner] Pre-separation Ultra (MDX-GPU) pour '{}'", track.title);
    #if defined(_WIN32)
     SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_BELOW_NORMAL);
+   #elif defined(__APPLE__)
+    {
+        int policy = SCHED_OTHER;
+        sched_param param{};
+        pthread_getschedparam(pthread_self(), &policy, &param);
+        param.sched_priority = sched_get_priority_min(SCHED_OTHER);
+        pthread_setschedparam(pthread_self(), SCHED_OTHER, &param);
+    }
    #endif
     Core::Stems::StemSepSotaService sota;
     auto stemRes = sota.separate(src, model);
    #if defined(_WIN32)
     SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_NORMAL);
+   #elif defined(__APPLE__)
+    {
+        int policy = SCHED_OTHER;
+        sched_param param{};
+        pthread_getschedparam(pthread_self(), &policy, &param);
+        param.sched_priority = (sched_get_priority_min(SCHED_OTHER)
+                                + sched_get_priority_max(SCHED_OTHER)) / 2;
+        pthread_setschedparam(pthread_self(), SCHED_OTHER, &param);
+    }
    #endif
     if (stemRes.ok)
         spdlog::info("[AnalysisRunner] Stems Ultra precalcules pour '{}'", track.title);

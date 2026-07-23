@@ -26,11 +26,23 @@ static juce::File locateRkbxBinary()
 {
     auto base = juce::File::getSpecialLocation(juce::File::currentExecutableFile)
                     .getParentDirectory();
+#ifdef _WIN32
     const char* candidates[] = {
         "rkbx_link.exe",
         "rkbx_link/rkbx_link.exe",
         "tools/rkbx_link.exe",
     };
+#else
+    const char* candidates[] = {
+        "rkbx_link",
+        "rkbx_link/rkbx_link",
+        "tools/rkbx_link",
+        "tools/external/rkbx_link",
+        "tools/external/rkbx_link/rkbx_link",
+        "../Resources/rkbx_link",
+        "../Resources/tools/external/rkbx_link",
+    };
+#endif
     for (auto* rel : candidates) {
         auto f = base.getChildFile(rel);
         if (f.existsAsFile()) return f;
@@ -90,6 +102,27 @@ bool RkbxLinkSubprocess::start(int oscPort)
             spdlog::info("[RkbxLink] spawned {}", childTag_);
         } else {
             spdlog::warn("[RkbxLink] CreateProcessW failed (err={})", GetLastError());
+        }
+#elif defined(__APPLE__)
+        // rkbx_link reads its `config` from the current working directory, so
+        // launch it via a shell that cd's into the binary's folder first.
+        auto dir = bin.getParentDirectory().getFullPathName();
+        juce::String shellCmd = "cd " + dir.quoted()
+                              + " && exec " + bin.getFullPathName().quoted()
+                              + " >/dev/null 2>&1";
+        juce::StringArray args;
+        args.add("/bin/sh");
+        args.add("-c");
+        args.add(shellCmd);
+
+        juce::ChildProcess child;
+        if (child.start(args, 0)) {
+            childUp_  = true;
+            childTag_ = bin.getFullPathName().toStdString();
+            spdlog::info("[RkbxLink] spawned {}", childTag_);
+        } else {
+            spdlog::warn("[RkbxLink] ChildProcess failed to start {}",
+                         bin.getFullPathName().toStdString());
         }
 #endif
     } else {

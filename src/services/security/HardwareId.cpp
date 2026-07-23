@@ -80,6 +80,35 @@ static std::string primaryMacAddress()
     }
     return result;
 }
+
+static std::filesystem::path macDataDir()
+{
+    const char* home = std::getenv("HOME");
+    std::filesystem::path base = home ? std::filesystem::path(home) : std::filesystem::path(".");
+    auto dir = base / "Library" / "Application Support" / "BeatMate";
+    std::error_code ec;
+    std::filesystem::create_directories(dir, ec);
+    return dir;
+}
+
+static std::string readHwidCacheMac()
+{
+    auto path = macDataDir() / "hwid.txt";
+    std::ifstream f(path, std::ios::binary);
+    if (!f.is_open()) return {};
+    std::string id((std::istreambuf_iterator<char>(f)), std::istreambuf_iterator<char>());
+    while (!id.empty() && (id.back() == '\n' || id.back() == '\r' || id.back() == ' '))
+        id.pop_back();
+    return id;
+}
+
+static void writeHwidCacheMac(const std::string& id)
+{
+    auto path = macDataDir() / "hwid.txt";
+    std::ofstream f(path, std::ios::binary | std::ios::trunc);
+    if (f.is_open())
+        f.write(id.data(), static_cast<std::streamsize>(id.size()));
+}
 #endif
 
 static bool containsCI(const std::string& haystack, const char* needle)
@@ -368,12 +397,20 @@ std::string HardwareId::getHardwareId() {
     spdlog::debug("HardwareId: generated and cached new HWID");
     return fresh;
 #elif defined(__APPLE__)
+    std::string cached = readHwidCacheMac();
+    if (!cached.empty()) {
+        spdlog::debug("HardwareId: cache hit");
+        return cached;
+    }
     const std::string uuid   = ioPlatformString(CFSTR("IOPlatformUUID"));
     const std::string serial = ioPlatformString(CFSTR("IOPlatformSerialNumber"));
     const std::string mac    = primaryMacAddress();
     std::string raw = uuid + serial + mac;
     if (raw.empty()) raw = "unknown";
-    return sha256Hex32(raw);
+    std::string fresh = sha256Hex32(raw);
+    writeHwidCacheMac(fresh);
+    spdlog::debug("HardwareId: generated and cached new HWID");
+    return fresh;
 #else
     return sha256Hex32("unknown");
 #endif

@@ -161,12 +161,23 @@ void UpdateService::downloadAndInstallAsync (std::string msiUrl,
                                        .withConnectionTimeoutMs (15000)));
         if (in == nullptr) { report (false, "Telechargement impossible (hote injoignable)."); return; }
 
+#ifdef _WIN32
         const bool isExe = urlStr.upToFirstOccurrenceOf ("?", false, false)
                                .endsWithIgnoreCase (".exe");
         auto dest = juce::File::getSpecialLocation (juce::File::tempDirectory)
                         .getChildFile ("BeatMate-Update")
                         .getChildFile (isExe ? "BeatMate-Suite-Setup.exe"
                                              : "BeatMate-Suite-Setup.msi");
+#elif defined(__APPLE__)
+        juce::ignoreUnused (urlStr);
+        auto dest = juce::File::getSpecialLocation (juce::File::tempDirectory)
+                        .getChildFile ("BeatMate-Update")
+                        .getChildFile ("BeatMate-Suite-Setup.dmg");
+#else
+        auto dest = juce::File::getSpecialLocation (juce::File::tempDirectory)
+                        .getChildFile ("BeatMate-Update")
+                        .getChildFile ("BeatMate-Suite-Setup.bin");
+#endif
         dest.getParentDirectory().createDirectory();
         dest.deleteFile();
 
@@ -195,7 +206,11 @@ void UpdateService::downloadAndInstallAsync (std::string msiUrl,
         UpdateService tmp ("0");
         std::string err;
         if (tmp.installFromFile (dest, err))
+#ifdef __APPLE__
+            report (true, "Image disque montee. Glissez BeatMate dans Applications pour terminer la mise a jour.");
+#else
             report (true, "Installeur lance. L'application va se fermer pour terminer la mise a jour.");
+#endif
         else
             report (false, "Echec du lancement de l'installeur: " + err);
     });
@@ -221,6 +236,16 @@ bool UpdateService::launchInstaller (const juce::File& msi, std::string& err) co
     if (proc.start (cmd, 0)) return true;
     if (msi.startAsProcess()) return true;
     err = "msiexec n'a pas pu demarrer.";
+    return false;
+#elif defined(__APPLE__)
+    if (! msi.existsAsFile()) {
+        err = "Fichier d'installation introuvable: " + msi.getFullPathName().toStdString();
+        return false;
+    }
+    juce::ChildProcess proc;
+    juce::StringArray cmd { "/usr/bin/open", msi.getFullPathName() };
+    if (proc.start (cmd, 0)) return true;
+    err = "Ouverture de l'image disque impossible (open).";
     return false;
 #else
     if (msi.startAsProcess()) return true;
