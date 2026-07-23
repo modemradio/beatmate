@@ -42,22 +42,28 @@ else()
         -Wno-unused-parameter
     )
 
-    # [OVERLAY MAC] SIMD x86 (-mavx2/-mfma/-march=native) : invalides sur ARM64
-    # (Apple Silicon). On ne les active que pour une cible x86_64.
-    set(_bm_target_x86 FALSE)
+    # [OVERLAY MAC] SIMD x86 (AVX2/FMA) invalides sur ARM64. Appliques a la
+    # tranche x86_64 uniquement ; en universal2 via -Xarch_x86_64.
+    set(_bm_has_x86 FALSE)
+    set(_bm_universal FALSE)
     if(APPLE)
         if(CMAKE_OSX_ARCHITECTURES)
-            if(CMAKE_OSX_ARCHITECTURES MATCHES "x86_64" AND NOT CMAKE_OSX_ARCHITECTURES MATCHES "arm64")
-                set(_bm_target_x86 TRUE)
+            if(CMAKE_OSX_ARCHITECTURES MATCHES "x86_64")
+                set(_bm_has_x86 TRUE)
+                if(CMAKE_OSX_ARCHITECTURES MATCHES "arm64")
+                    set(_bm_universal TRUE)
+                endif()
             endif()
         elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64")
-            set(_bm_target_x86 TRUE)
+            set(_bm_has_x86 TRUE)
         endif()
     elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64|AMD64|i686")
-        set(_bm_target_x86 TRUE)
+        set(_bm_has_x86 TRUE)
     endif()
-    if(_bm_target_x86)
-        add_compile_options(-march=native -mavx2 -mfma)
+    if(_bm_universal)
+        add_compile_options(-Xarch_x86_64 -mavx2 -Xarch_x86_64 -mfma)
+    elseif(_bm_has_x86)
+        add_compile_options(-mavx2 -mfma)
     endif()
 
     if(CMAKE_BUILD_TYPE STREQUAL "Release")
