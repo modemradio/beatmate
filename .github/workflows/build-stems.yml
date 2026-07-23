@@ -14,25 +14,34 @@ permissions:
 
 jobs:
   stems:
-    runs-on: ${{ github.event.inputs.arch == 'x64' && 'macos-13' || 'macos-14' }}
-    timeout-minutes: 120
+    runs-on: macos-14
+    timeout-minutes: 150
     env:
       ASSET: ${{ github.event.inputs.arch == 'x64' && 'stemsep-macos-x64.zip' || 'stemsep-macos.zip' }}
+      ISX64: ${{ github.event.inputs.arch == 'x64' }}
+      PFX: ${{ github.event.inputs.arch == 'x64' && 'arch -x86_64' || '' }}
+      PY: ${{ github.event.inputs.arch == 'x64' && '/usr/local/bin/python3.12' || '/opt/homebrew/bin/python3.12' }}
     steps:
       - uses: actions/checkout@v4
 
       - name: Python + ffmpeg
         run: |
-          brew install python@3.12 ffmpeg
-          "$(brew --prefix python@3.12)/bin/python3.12" -m venv venv
-          source venv/bin/activate
-          python -m pip install --upgrade pip wheel
+          if [ "$ISX64" = "true" ]; then
+            echo "Installation Rosetta + toolchain x86_64..."
+            softwareupdate --install-rosetta --agree-to-license || true
+            arch -x86_64 /bin/bash -c 'NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"' || true
+            arch -x86_64 /usr/local/bin/brew install python@3.12 ffmpeg
+          else
+            brew install python@3.12 ffmpeg
+          fi
+          $PFX "$PY" -m venv venv
+          $PFX venv/bin/python -m pip install --upgrade pip wheel
+          $PFX venv/bin/python -c "import platform; print('venv arch =', platform.machine())"
 
       - name: audio-separator + pyinstaller
         run: |
-          source venv/bin/activate
-          pip install "audio-separator[cpu]==0.44.2" pyinstaller onnxruntime
-          python -c "import onnxruntime; print('onnxruntime', onnxruntime.__version__, onnxruntime.get_available_providers())"
+          $PFX venv/bin/pip install "audio-separator[cpu]==0.44.2" pyinstaller onnxruntime
+          $PFX venv/bin/python -c "import onnxruntime; print('onnxruntime', onnxruntime.__version__, onnxruntime.get_available_providers())"
 
       - name: Wrapper CLI
         run: |
@@ -64,19 +73,18 @@ jobs:
 
       - name: Freeze (PyInstaller)
         run: |
-          source venv/bin/activate
-          pyinstaller --onedir --name stemsep \
+          $PFX venv/bin/pyinstaller --onedir --name stemsep \
             --collect-all audio_separator \
             --collect-all onnxruntime \
             --copy-metadata audio_separator \
             stemsep_cli.py
           ls -la dist/stemsep | head -20
+          file dist/stemsep/stemsep || true
 
       - name: Telecharger les modeles
         run: |
-          source venv/bin/activate
           mkdir -p dist/stemsep/models
-          python - <<'PY'
+          $PFX venv/bin/python - <<'PY'
           from audio_separator.separator import Separator
           s = Separator(model_file_dir="dist/stemsep/models")
           for m in ("UVR-MDX-NET-Voc_FT.onnx", "htdemucs_ft.yaml"):
@@ -98,7 +106,6 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           REL_ID=358336226
-          # supprimer un ancien asset du meme nom
           OLD=$(curl -s -H "Authorization: Bearer $GH_TOKEN" \
             "https://api.github.com/repos/${{ github.repository }}/releases/$REL_ID/assets" \
             | python3 -c "import sys,json;[print(a['id']) for a in json.load(sys.stdin) if a['name']=='$ASSET']" 2>/dev/null || true)
@@ -116,7 +123,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: stemsep-macos
+          name: ${{ github.event.inputs.arch == 'x64' && 'stemsep-macos-x64' || 'stemsep-macos' }}
           path: ${{ github.event.inputs.arch == 'x64' && 'stemsep-macos-x64.zip' || 'stemsep-macos.zip' }}
           if-no-files-found: warn
           retention-days: 7
