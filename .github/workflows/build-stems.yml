@@ -3,6 +3,9 @@ name: Build stems engine (macOS)
 on:
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   stems:
     runs-on: macos-14
