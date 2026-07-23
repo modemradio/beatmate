@@ -20,7 +20,8 @@ jobs:
       - name: audio-separator + pyinstaller
         run: |
           source venv/bin/activate
-          pip install "audio-separator[silicon]==0.44.2" pyinstaller
+          pip install "audio-separator[cpu]==0.44.2" pyinstaller onnxruntime
+          python -c "import onnxruntime; print('onnxruntime', onnxruntime.__version__, onnxruntime.get_available_providers())"
 
       - name: Wrapper CLI
         run: |
@@ -69,7 +70,7 @@ jobs:
           s = Separator(model_file_dir="dist/stemsep/models")
           for m in ("UVR-MDX-NET-Voc_FT.onnx", "htdemucs_ft.yaml"):
               try:
-                  s.download_model_files(m)
+                  s.load_model(model_filename=m)
                   print("OK", m)
               except Exception as e:
                   print("ECHEC", m, e)
