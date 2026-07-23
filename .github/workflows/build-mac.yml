@@ -101,6 +101,17 @@ jobs:
             echo "stemsep-macos.zip pas encore sur la release — skip (sera bundle au prochain build)"
           fi
 
+      - name: Bundler ffmpeg
+        if: success()
+        run: |
+          APP="build-mac/BeatMateV11_artefacts/Release/BeatMate V11.app"
+          MACOS="$APP/Contents/MacOS"
+          if [ -d "$APP" ]; then
+            curl -sL -o "$MACOS/ffmpeg" "https://github.com/eugeneware/ffmpeg-static/releases/download/b6.1.1/ffmpeg-darwin-arm64"
+            chmod +x "$MACOS/ffmpeg"
+            "$MACOS/ffmpeg" -version 2>/dev/null | head -1 || echo "ATTENTION: ffmpeg non executable"
+          fi
+
       - name: Signature ad-hoc
         if: success()
         run: |
