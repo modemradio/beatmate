@@ -84,22 +84,20 @@ jobs:
         run: |
           APP="build-mac/BeatMateV11_artefacts/Release/BeatMate V11.app"
           EXT="$APP/Contents/MacOS/tools/external"
-          AID=$(curl -s -H "Authorization: Bearer $GH_TOKEN" \
-            "https://api.github.com/repos/${{ github.repository }}/releases/358336226/assets" \
-            | python3 -c "import sys,json;a=[x['id'] for x in json.load(sys.stdin) if x['name']=='stemsep-macos.zip'];print(a[0] if a else '')")
-          if [ -n "$AID" ]; then
-            echo "Telechargement stems (asset $AID)..."
-            curl -sL -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/octet-stream" \
-              "https://api.github.com/repos/${{ github.repository }}/releases/assets/$AID" -o stemsep.zip
-            mkdir -p "$EXT"
-            unzip -q -o stemsep.zip -d "$EXT/"
-            chmod +x "$EXT/stemsep/stemsep" 2>/dev/null || true
-            rm -f stemsep.zip
-            echo "stems bundle OK :"
-            ls -la "$EXT/stemsep" | head
-          else
-            echo "stemsep-macos.zip pas encore sur la release — skip (sera bundle au prochain build)"
+          mkdir -p "$EXT"
+          echo "Telechargement du moteur de stems (asset 487347176)..."
+          curl -sL -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/octet-stream" \
+            "https://api.github.com/repos/${{ github.repository }}/releases/assets/487347176" -o stemsep.zip
+          SZ=$(stat -f%z stemsep.zip 2>/dev/null || echo 0)
+          echo "telecharge : $SZ octets"
+          if [ "$SZ" -lt 1000000 ]; then
+            echo "ATTENTION: telechargement stems invalide"; head -c 400 stemsep.zip; echo; exit 1
           fi
+          unzip -q -o stemsep.zip -d "$EXT/"
+          chmod +x "$EXT/stemsep/stemsep" 2>/dev/null || true
+          rm -f stemsep.zip
+          echo "stems bundle OK :"
+          ls -la "$EXT/stemsep" | head
 
       - name: Bundler ffmpeg
         if: success()
