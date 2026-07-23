@@ -498,6 +498,19 @@ namespace {
 
 constexpr const char* kSettingsKey = "beatmate.live.autoHidePolicy";
 
+#if JUCE_WINDOWS || defined(__APPLE__)
+static const char* kDJTitleSubstrings[] = {
+    "rekordbox", "serato", "traktor", "virtualdj", "engine"
+};
+
+static bool matchesAny(const std::string& haystack, const char* const* needles, size_t n)
+{
+    for (size_t i = 0; i < n; ++i)
+        if (haystack.find(needles[i]) != std::string::npos) return true;
+    return false;
+}
+#endif
+
 #if JUCE_WINDOWS
 static BeatMateLiveWindow* s_hotkeyOwner = nullptr;
 
@@ -512,16 +525,6 @@ static const char* kDJProcessNames[] = {
     "engine_prime.exe",
     "enginedj.exe"
 };
-static const char* kDJTitleSubstrings[] = {
-    "rekordbox", "serato", "traktor", "virtualdj", "engine"
-};
-
-static bool matchesAny(const std::string& haystack, const char* const* needles, size_t n)
-{
-    for (size_t i = 0; i < n; ++i)
-        if (haystack.find(needles[i]) != std::string::npos) return true;
-    return false;
-}
 
 // RegisterHotKey needs a thread that runs a Win32 message loop
 class HotkeyThread : public juce::Thread

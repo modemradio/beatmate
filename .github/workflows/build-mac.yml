@@ -124,6 +124,34 @@ jobs:
             echo "app introuvable: $APP"
           fi
 
+      - name: Smoke test (lancement headless)
+        if: success()
+        run: |
+          APP="build-mac/BeatMateV11_artefacts/Release/BeatMate V11.app"
+          BIN="$APP/Contents/MacOS/BeatMate V11"
+          if [ ! -x "$BIN" ]; then echo "binaire introuvable: $BIN"; exit 1; fi
+          echo "otool -L (dylibs liees) :"
+          otool -L "$BIN" | head -40 || true
+          echo "Lancement de l'app pour 20s..."
+          "$BIN" > smoke.log 2>&1 &
+          PID=$!
+          sleep 20
+          if kill -0 "$PID" 2>/dev/null; then
+            echo "SMOKE OK: l'app tourne toujours apres 20s (pas de crash au demarrage)"
+            kill "$PID" 2>/dev/null || true
+            wait "$PID" 2>/dev/null || true
+          else
+            echo "SMOKE: l'app s'est arretee avant 20s (peut etre benin)"
+          fi
+          echo "=== sortie (fin du log) ==="
+          tail -c 4000 smoke.log || true
+          echo "=== recherche erreurs de chargement ==="
+          if grep -iE "Library not loaded|Symbol not found|image not found|dyld\[|dyld: " smoke.log; then
+            echo "ERREUR DE CHARGEMENT (dylib/symbole manquant) — echec"
+            exit 1
+          fi
+          echo "OK: aucune erreur de chargement dylib/symbole"
+
       - name: DMG
         if: success()
         run: |
