@@ -30,7 +30,7 @@ jobs:
             echo "Installation Rosetta + toolchain x86_64..."
             softwareupdate --install-rosetta --agree-to-license || true
             arch -x86_64 /bin/bash -c 'NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"' || true
-            arch -x86_64 /usr/local/bin/brew install python@3.11 llvm || true
+            arch -x86_64 /usr/local/bin/brew install python@3.11 || true
             arch -x86_64 /usr/local/bin/brew link --overwrite --force python@3.11 || true
             arch -x86_64 /usr/local/bin/brew install ffmpeg || true
           else
@@ -44,11 +44,15 @@ jobs:
       - name: audio-separator + pyinstaller
         run: |
           if [ "$ISX64" = "true" ]; then
-            $PFX venv/bin/pip install "audio-separator[cpu]" pyinstaller onnxruntime
+            # llvmlite >=0.46 / numba >=0.63 n'ont plus de wheels macOS x86_64 :
+            # --only-binary force pip a retrograder vers les dernieres versions en wheel
+            # (numba 0.62.1 + llvmlite 0.45.1) au lieu de compiler les sdists (echec LLVM).
+            $PFX venv/bin/pip install --only-binary=llvmlite,numba "audio-separator[cpu]" pyinstaller onnxruntime
           else
             $PFX venv/bin/pip install "audio-separator[cpu]==0.44.2" pyinstaller onnxruntime
           fi
           $PFX venv/bin/pip show audio-separator | sed -n 's/^Version:/audio-separator/p'
+          $PFX venv/bin/pip show torch numba llvmlite onnxruntime 2>/dev/null | grep -E '^(Name|Version):' || true
           $PFX venv/bin/python -c "import onnxruntime; print('onnxruntime', onnxruntime.__version__, onnxruntime.get_available_providers())"
 
       - name: Wrapper CLI
@@ -93,14 +97,19 @@ jobs:
         run: |
           mkdir -p dist/stemsep/models
           $PFX venv/bin/python - <<'PY'
+          import sys
           from audio_separator.separator import Separator
           s = Separator(model_file_dir="dist/stemsep/models")
+          failed = False
           for m in ("UVR-MDX-NET-Voc_FT.onnx", "htdemucs_ft.yaml"):
               try:
                   s.load_model(model_filename=m)
                   print("OK", m)
               except Exception as e:
                   print("ECHEC", m, e)
+                  failed = True
+          if failed:
+              sys.exit(1)
           PY
           du -sh dist/stemsep/models || true
 
