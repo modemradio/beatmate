@@ -43,7 +43,12 @@ jobs:
 
       - name: audio-separator + pyinstaller
         run: |
-          $PFX venv/bin/pip install "audio-separator[cpu]==0.44.2" pyinstaller onnxruntime
+          if [ "$ISX64" = "true" ]; then
+            $PFX venv/bin/pip install "audio-separator[cpu]" pyinstaller onnxruntime
+          else
+            $PFX venv/bin/pip install "audio-separator[cpu]==0.44.2" pyinstaller onnxruntime
+          fi
+          $PFX venv/bin/pip show audio-separator | sed -n 's/^Version:/audio-separator/p'
           $PFX venv/bin/python -c "import onnxruntime; print('onnxruntime', onnxruntime.__version__, onnxruntime.get_available_providers())"
 
       - name: Wrapper CLI
