@@ -34,7 +34,8 @@ jobs:
           LIBDIR="third_party/onnxruntime/lib"
           if ! ls "$LIBDIR"/libonnxruntime*.dylib >/dev/null 2>&1; then
             echo "Telechargement ONNX Runtime $ONNX_VER (universal2)..."
-            curl -L -o ort.tgz "https://github.com/microsoft/onnxruntime/releases/download/v${ONNX_VER}/onnxruntime-osx-universal2-${ONNX_VER}.tgz"
+            curl -fL --retry 6 --retry-delay 15 --retry-all-errors -o ort.tgz \
+              "https://github.com/microsoft/onnxruntime/releases/download/v${ONNX_VER}/onnxruntime-osx-universal2-${ONNX_VER}.tgz"
             tar xzf ort.tgz
             mkdir -p third_party/onnxruntime
             cp -R "onnxruntime-osx-universal2-${ONNX_VER}/include" third_party/onnxruntime/
